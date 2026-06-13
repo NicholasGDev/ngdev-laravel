@@ -70,9 +70,9 @@ use Illuminate\Support\Facades\Route;
 
 pub fn controller(ns: &str, name: &str, operations: &[String]) -> String {
     let mut uses = vec![
-        format!("use {ns}\\{name}\\Infra\\Presentation\\Http\\Controllers\\Controller;"),
-        format!("use Illuminate\\Http\\JsonResponse;"),
-        format!("use Illuminate\\Http\\Request;"),
+        "use App\\Http\\Controllers\\Controller;".to_string(),
+        "use Illuminate\\Http\\JsonResponse;".to_string(),
+        "use Illuminate\\Http\\Request;".to_string(),
     ];
 
     let has_consultar = operations.contains(&"consultar".to_string());
@@ -82,7 +82,7 @@ pub fn controller(ns: &str, name: &str, operations: &[String]) -> String {
     let has_deletar = operations.contains(&"deletar".to_string());
 
     if has_consultar {
-        uses.push(format!("use {ns}\\{name}\\Application\\DTOs\\Inputs\\PaginacaoInput;"));
+        uses.push("use App\\Contexts\\Compartilhado\\Base\\Application\\DTOs\\Inputs\\PaginacaoInput;".to_string());
         uses.push(format!("use {ns}\\{name}\\Application\\Queries\\Consultar{name}sQuery;"));
     }
     if has_detalhar {

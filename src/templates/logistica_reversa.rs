@@ -3,6 +3,8 @@
 pub fn migration_seguradoras() -> &'static str {
     r#"<?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +35,8 @@ return new class extends Migration
 
 pub fn migration_transportadoras() -> &'static str {
     r#"<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -66,6 +70,8 @@ return new class extends Migration
 pub fn migration_segurados() -> &'static str {
     r#"<?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -97,6 +103,8 @@ return new class extends Migration
 
 pub fn migration_apolices() -> &'static str {
     r#"<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -130,6 +138,8 @@ return new class extends Migration
 
 pub fn migration_sinistros() -> &'static str {
     r#"<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -166,6 +176,8 @@ return new class extends Migration
 pub fn migration_itens_sinistrados() -> &'static str {
     r#"<?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -197,6 +209,8 @@ return new class extends Migration
 
 pub fn migration_ordens_coleta() -> &'static str {
     r#"<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -236,6 +250,8 @@ return new class extends Migration
 pub fn migration_movimentacoes_logisticas() -> &'static str {
     r#"<?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -269,6 +285,8 @@ return new class extends Migration
 pub fn migration_recebimentos_cd() -> &'static str {
     r#"<?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -301,6 +319,8 @@ return new class extends Migration
 
 pub fn migration_laudos_triagem() -> &'static str {
     r#"<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
