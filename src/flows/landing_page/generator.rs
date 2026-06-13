@@ -45,24 +45,24 @@ fn generate_generic(opts: &LandingPageOptions) -> Result<()> {
     let hero_html   = templates::section_hero(&opts.product_name, &opts.tagline);
     let footer_html = templates::section_footer(&opts.company_name);
 
-    write_file(&sections_dir.join("navbar.html"), &navbar_html)?;
-    write_file(&sections_dir.join("hero.html"),   &hero_html)?;
-    write_file(&sections_dir.join("footer.html"), &footer_html)?;
+    write_file(&sections_dir.join("navbar").join("index.html"), &navbar_html)?;
+    write_file(&sections_dir.join("hero").join("index.html"),   &hero_html)?;
+    write_file(&sections_dir.join("footer").join("index.html"), &footer_html)?;
 
     let order: &[(&str, &str)] = &[
-        ("logos",         "logos.html"),
-        ("features_grid", "features_grid.html"),
-        ("features_tabs", "features_tabs.html"),
-        ("stats",         "stats.html"),
-        ("testimonials",  "testimonials.html"),
-        ("pricing",       "pricing.html"),
-        ("faq",           "faq.html"),
-        ("cta_bottom",    "cta_bottom.html"),
+        ("logos",         "logos"),
+        ("features_grid", "features_grid"),
+        ("features_tabs", "features_tabs"),
+        ("stats",         "stats"),
+        ("testimonials",  "testimonials"),
+        ("pricing",       "pricing"),
+        ("faq",           "faq"),
+        ("cta_bottom",    "cta_bottom"),
     ];
 
     let mut body_parts = vec![navbar_html.clone(), hero_html.clone()];
 
-    for (key, filename) in order {
+    for (key, dir_name) in order {
         if opts.sections.contains(&key.to_string()) {
             let fragment = match *key {
                 "logos"         => templates::section_logos().to_string(),
@@ -75,7 +75,7 @@ fn generate_generic(opts: &LandingPageOptions) -> Result<()> {
                 "cta_bottom"    => templates::section_cta_bottom(&opts.product_name),
                 _               => String::new(),
             };
-            write_file(&sections_dir.join(filename), &fragment)?;
+            write_file(&sections_dir.join(dir_name).join("index.html"), &fragment)?;
             body_parts.push(fragment);
         }
     }
@@ -99,23 +99,23 @@ fn generate_saas(opts: &LandingPageOptions) -> Result<()> {
     let hero_html   = templates_saas::section_hero_saas(&opts.product_name, &opts.tagline);
     let footer_html = templates_saas::section_footer_saas(&opts.company_name);
 
-    write_file(&sections_dir.join("navbar.html"), &navbar_html)?;
-    write_file(&sections_dir.join("hero.html"),   &hero_html)?;
-    write_file(&sections_dir.join("footer.html"), &footer_html)?;
+    write_file(&sections_dir.join("navbar").join("index.html"), &navbar_html)?;
+    write_file(&sections_dir.join("hero").join("index.html"),   &hero_html)?;
+    write_file(&sections_dir.join("footer").join("index.html"), &footer_html)?;
 
     let order: &[(&str, &str)] = &[
-        ("social_proof",       "social_proof.html"),
-        ("comparison_table",   "comparison_table.html"),
-        ("journey_selector",   "journey_selector.html"),
-        ("benefits_slider",    "benefits_slider.html"),
-        ("content_grid",       "content_grid.html"),
-        ("testimonials_photo", "testimonials_photo.html"),
-        ("faq",                "faq.html"),
+        ("social_proof",       "social_proof"),
+        ("comparison_table",   "comparison_table"),
+        ("journey_selector",   "journey_selector"),
+        ("benefits_slider",    "benefits_slider"),
+        ("content_grid",       "content_grid"),
+        ("testimonials_photo", "testimonials_photo"),
+        ("faq",                "faq"),
     ];
 
     let mut body_parts = vec![navbar_html.clone(), hero_html.clone()];
 
-    for (key, filename) in order {
+    for (key, dir_name) in order {
         if opts.sections.contains(&key.to_string()) {
             let fragment = match *key {
                 "social_proof"       => templates_saas::section_social_proof().to_string(),
@@ -127,7 +127,7 @@ fn generate_saas(opts: &LandingPageOptions) -> Result<()> {
                 "faq"                => templates_saas::section_faq_saas().to_string(),
                 _                    => String::new(),
             };
-            write_file(&sections_dir.join(filename), &fragment)?;
+            write_file(&sections_dir.join(dir_name).join("index.html"), &fragment)?;
             body_parts.push(fragment);
         }
     }
@@ -154,21 +154,23 @@ fn print_report(opts: &LandingPageOptions, order: &[(&str, &str)], index_path: &
     println!(
         "  {} {}",
         style("→").dim(),
-        style("sections/navbar.html · hero.html · footer.html").cyan()
+        style("sections/navbar/index.html · sections/hero/index.html · sections/footer/index.html").cyan()
     );
 
     let active: Vec<&str> = order
         .iter()
         .filter(|(k, _)| opts.sections.contains(&k.to_string()))
-        .map(|(_, f)| *f)
+        .map(|(_, d)| *d)
         .collect();
 
     if !active.is_empty() {
-        println!(
-            "  {} sections/{}",
-            style("→").dim(),
-            style(active.join(" · ")).cyan()
-        );
+        for dir in &active {
+            println!(
+                "  {} sections/{}/index.html",
+                style("→").dim(),
+                style(dir).cyan()
+            );
+        }
     }
 
     if let Ok(abs) = fs::canonicalize(index_path) {
