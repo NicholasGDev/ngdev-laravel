@@ -1,0 +1,9 @@
+{
+  "identifier": "default",
+  "description": "Permissões padrão para o ngdev Manager",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:allow-open"
+  ]
+}
