@@ -77,6 +77,7 @@ fn main() -> Result<()> {
             "Criar Context (DDD Completo)",
             "Scaffold Logistica Reversa de Sinistros (DDD Completo)",
             "Scaffold ERP Estoque (DDD Completo)",
+            "Gerar Infra Docker (dev + prod, multi-DB)",
             "Criar Model",
             "Criar Controller",
             "Criar Migration",
@@ -96,11 +97,12 @@ fn main() -> Result<()> {
             0 => wizard_context(&theme)?,
             1 => wizard_logistica_reversa(&theme)?,
             2 => wizard_estoque(&theme)?,
-            3 => wizard_model(&theme)?,
-            4 => wizard_controller(&theme)?,
-            5 => wizard_migration(&theme)?,
-            6 => wizard_pdv(&theme)?,
-            7 => {
+            3 => wizard_docker(&theme)?,
+            4 => wizard_model(&theme)?,
+            5 => wizard_controller(&theme)?,
+            6 => wizard_migration(&theme)?,
+            7 => wizard_pdv(&theme)?,
+            8 => {
                 println!("{}", style("  Ate logo!").cyan().bold());
                 break;
             }
@@ -416,6 +418,103 @@ fn wizard_estoque(theme: &ColorfulTheme) -> Result<()> {
         migration_path,
         tenant_id,
         valuation_method: valuation_method.to_string(),
+    })?;
+
+    Ok(())
+}
+
+// ─── Docker Wizard ────────────────────────────────────────────────────────────
+
+fn wizard_docker(theme: &ColorfulTheme) -> Result<()> {
+    println!("{}", style("  [ Gerar Infra Docker ]").yellow().bold());
+    println!();
+    println!("  {}", style("Gera Dockerfile.dev + Dockerfile.prod + docker-compose (dev/prod)").dim());
+    println!("  {}", style("+ Nginx + PHP-FPM + Xdebug + Supervisor + Makefile + .env.example").dim());
+    println!();
+
+    let app_name: String = Input::with_theme(theme)
+        .with_prompt("  Nome da aplicacao")
+        .default("MyApp".to_string())
+        .interact_text()?;
+
+    let output_path: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio de saida (raiz do projeto Laravel)")
+        .default(".".to_string())
+        .interact_text()?;
+
+    let server_name: String = Input::with_theme(theme)
+        .with_prompt("  server_name do Nginx (ex: localhost ou app.local)")
+        .default("localhost".to_string())
+        .interact_text()?;
+
+    // ── PHP version ───────────────────────────────────────────────────────────
+    let php_versions = vec!["8.3 (latest stable)", "8.2", "8.1"];
+    let php_idx = Select::with_theme(theme)
+        .with_prompt("  Versao do PHP")
+        .items(&php_versions)
+        .default(0)
+        .interact()?;
+    let php_version = match php_idx {
+        0 => "8.3",
+        1 => "8.2",
+        _ => "8.1",
+    };
+
+    // ── Node version ──────────────────────────────────────────────────────────
+    let node_versions = vec!["22 (LTS current)", "20 (LTS)"];
+    let node_idx = Select::with_theme(theme)
+        .with_prompt("  Versao do Node.js")
+        .items(&node_versions)
+        .default(0)
+        .interact()?;
+    let node_version: u8 = if node_idx == 0 { 22 } else { 20 };
+
+    // ── Bancos de dados ───────────────────────────────────────────────────────
+    let db_labels = &[
+        "MySQL 8.4",
+        "MariaDB 11.4",
+        "PostgreSQL 17",
+        "SQL Server 2022",
+        "SQLite (sem container, apenas extensao)",
+    ];
+    let db_keys = &["mysql", "mariadb", "pgsql", "sqlserver", "sqlite"];
+    let db_defaults = &[true, false, false, false, false];
+
+    let db_selecionados = MultiSelect::with_theme(theme)
+        .with_prompt("  Bancos de dados [Espaco=selecionar]")
+        .items(db_labels)
+        .defaults(db_defaults)
+        .interact()?;
+
+    let databases: Vec<String> = db_selecionados
+        .iter()
+        .map(|&i| db_keys[i].to_string())
+        .collect();
+
+    // ── Extras ────────────────────────────────────────────────────────────────
+    let with_redis = Confirm::with_theme(theme)
+        .with_prompt("  Incluir Redis (cache + queue + session)?")
+        .default(true)
+        .interact()?;
+
+    let with_mailpit = Confirm::with_theme(theme)
+        .with_prompt("  Incluir Mailpit (SMTP local para dev)?")
+        .default(true)
+        .interact()?;
+
+    println!();
+    println!("  {}", style("Gerando infra...").yellow().bold());
+    println!();
+
+    generators::docker::generate(&generators::docker::DockerOptions {
+        app_name,
+        php_version: php_version.to_string(),
+        node_version,
+        output_path,
+        server_name,
+        databases,
+        with_redis,
+        with_mailpit,
     })?;
 
     Ok(())
