@@ -76,6 +76,7 @@ fn main() -> Result<()> {
             "Scaffold Logistica Reversa de Sinistros (DDD Completo)",
             "Scaffold ERP Estoque (DDD Completo)",
             "Gerar Infra Docker (dev + prod, multi-DB)",
+            "Gerar Landing Page (HTML + Tailwind + DaisyUI)",
             "Criar Model",
             "Criar Controller",
             "Criar Migration",
@@ -96,11 +97,12 @@ fn main() -> Result<()> {
             1 => flows::logistica_reversa::run(&theme)?,
             2 => flows::estoque::run(&theme)?,
             3 => flows::docker::run(&theme)?,
-            4 => flows::artesanal::model::run(&theme)?,
-            5 => flows::artesanal::controller::run(&theme)?,
-            6 => flows::artesanal::migration::run(&theme)?,
-            7 => flows::pdv::run(&theme)?,
-            8 => {
+            4 => flows::landing_page::run(&theme)?,
+            5 => flows::artesanal::model::run(&theme)?,
+            6 => flows::artesanal::controller::run(&theme)?,
+            7 => flows::artesanal::migration::run(&theme)?,
+            8 => flows::pdv::run(&theme)?,
+            9 => {
                 println!("{}", style("  Ate logo!").cyan().bold());
                 break;
             }

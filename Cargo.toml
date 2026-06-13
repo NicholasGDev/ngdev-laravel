@@ -17,6 +17,10 @@ target = "x86_64-unknown-linux-musl"
 name = "ngdev"
 path = "src/main.rs"
 
+[lib]
+name = "ngdev_laravel"
+path = "src/lib.rs"
+
 [dependencies]
 tera = "1"
 serde = { version = "1", features = ["derive"] }
@@ -25,3 +29,10 @@ heck = "0.5"
 anyhow = "1"
 dialoguer = "0.11"
 console = "0.15"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "generators"
+harness = false
