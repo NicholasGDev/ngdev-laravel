@@ -75,6 +75,7 @@ fn main() -> Result<()> {
     loop {
         let opcoes = vec![
             "Criar Context (DDD Completo)",
+            "Scaffold Logistica Reversa de Sinistros (DDD Completo)",
             "Criar Model",
             "Criar Controller",
             "Criar Migration",
@@ -92,11 +93,12 @@ fn main() -> Result<()> {
 
         match selecao {
             0 => wizard_context(&theme)?,
-            1 => wizard_model(&theme)?,
-            2 => wizard_controller(&theme)?,
-            3 => wizard_migration(&theme)?,
-            4 => wizard_pdv(&theme)?,
-            5 => {
+            1 => wizard_logistica_reversa(&theme)?,
+            2 => wizard_model(&theme)?,
+            3 => wizard_controller(&theme)?,
+            4 => wizard_migration(&theme)?,
+            5 => wizard_pdv(&theme)?,
+            6 => {
                 println!("{}", style("  Ate logo!").cyan().bold());
                 break;
             }
@@ -299,6 +301,62 @@ fn wizard_pdv(theme: &ColorfulTheme) -> Result<()> {
     generators::pdv::generate(&cli::PdvArgs {
         migrations_only: selecao == 1,
         models_only: selecao == 2,
+    })?;
+
+    Ok(())
+}
+
+// ─── Logistica Reversa Wizard ─────────────────────────────────────────────────
+
+fn wizard_logistica_reversa(theme: &ColorfulTheme) -> Result<()> {
+    println!("{}", style("  [ Scaffold Logistica Reversa de Sinistros ]").yellow().bold());
+    println!();
+    println!("  {}", style("Gera 7 Contexts DDD + 10 Migrations + 10 Eloquent Models + Manager JSON").dim());
+    println!("  {}", style("Entidades: Seguradora · Transportadora · Segurado · Apolice").dim());
+    println!("  {}", style("           Sinistro · OrdemColeta · LaudoTriagem").dim());
+    println!();
+
+    let base_path: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio base dos Contexts")
+        .default("back/app/Contexts".to_string())
+        .interact_text()?;
+
+    let namespace_base: String = Input::with_theme(theme)
+        .with_prompt("  Namespace base PHP")
+        .default("App\\Contexts".to_string())
+        .interact_text()?;
+
+    let migration_path: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio das Migrations")
+        .default("database/migrations".to_string())
+        .interact_text()?;
+
+    let erp_id: String = Input::with_theme(theme)
+        .with_prompt("  ERP ID (tenant config)")
+        .default("revlog-core-01".to_string())
+        .interact_text()?;
+
+    let company_name: String = Input::with_theme(theme)
+        .with_prompt("  Nome da empresa")
+        .default("Reversa Express Log".to_string())
+        .interact_text()?;
+
+    let warehouse_id: String = Input::with_theme(theme)
+        .with_prompt("  ID do CD (warehouse)")
+        .default("CD-SP-01".to_string())
+        .interact_text()?;
+
+    println!();
+    println!("  {}", style("Gerando estrutura completa...").yellow().bold());
+    println!();
+
+    generators::logistica_reversa::generate(&generators::logistica_reversa::LogisticaReversaOptions {
+        base_path,
+        namespace_base,
+        migration_path,
+        erp_id,
+        company_name,
+        warehouse_id,
     })?;
 
     Ok(())
