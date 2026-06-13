@@ -59,6 +59,7 @@ pub struct LandingPageInput {
     pub tagline: String,
     pub company_name: String,
     pub theme: String,
+    pub layout: String,
     pub sections: Vec<String>,
     pub output_dir: String,
 }
@@ -163,6 +164,7 @@ pub fn generate_landing_page(input: LandingPageInput) -> Result<String, String> 
         tagline: input.tagline,
         company_name: input.company_name,
         theme: input.theme,
+        layout: input.layout,
         sections: input.sections,
         output_dir: input.output_dir.clone(),
     };

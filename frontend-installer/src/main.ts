@@ -250,6 +250,15 @@ const pages: Record<string, () => string> = {
     <h2 class="text-2xl font-bold mb-4">🌐 Gerar Landing Page</h2>
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <label class="form-control md:col-span-2">
+          <span class="label-text font-semibold">Layout Base</span>
+          <select id="lp-layout" class="select select-bordered" onchange="window._lpLayoutChange(this.value)">
+            <option value="generic">Generic — DaisyUI · produto/SaaS clássico</option>
+            <option value="saas">SaaS — Contabilizei-style · fundo branco · serviços</option>
+          </select>
+        </label>
+
         <label class="form-control">
           <span class="label-text">Nome do Produto</span>
           <input id="lp-prod" type="text" placeholder="Zeus PDV" class="input input-bordered" />
@@ -266,6 +275,56 @@ const pages: Record<string, () => string> = {
           <span class="label-text">Diretório de Saída</span>
           <input id="lp-out" type="text" placeholder="landing" class="input input-bordered" />
         </label>
+
+        <!-- Tema (só para generic) -->
+        <label class="form-control md:col-span-2" id="lp-theme-row">
+          <span class="label-text">Tema DaisyUI</span>
+          <select id="lp-theme" class="select select-bordered">
+            <option value="dark">dark</option>
+            <option value="light">light</option>
+            <option value="corporate">corporate</option>
+            <option value="retro">retro</option>
+            <option value="cyberpunk">cyberpunk</option>
+          </select>
+        </label>
+
+        <!-- Seções Generic -->
+        <div class="md:col-span-2" id="lp-sec-generic">
+          <p class="label-text mb-2 font-semibold">Seções — Generic</p>
+          <div class="flex flex-wrap gap-3">
+            ${["logos","features_grid","features_tabs","stats","testimonials","pricing","faq","cta_bottom"].map(s => `
+              <label class="label cursor-pointer gap-2">
+                <input type="checkbox" class="checkbox checkbox-primary lp-sec" value="${s}" checked />
+                <span class="label-text text-xs">${s}</span>
+              </label>`).join("")}
+          </div>
+        </div>
+
+        <!-- Seções SaaS -->
+        <div class="md:col-span-2 hidden" id="lp-sec-saas">
+          <p class="label-text mb-2 font-semibold">Seções — SaaS</p>
+          <div class="flex flex-wrap gap-3">
+            ${["social_proof","comparison_table","journey_selector","benefits_slider","content_grid","testimonials_photo","faq"].map(s => `
+              <label class="label cursor-pointer gap-2">
+                <input type="checkbox" class="checkbox checkbox-secondary lp-sec-saas-chk" value="${s}" checked />
+                <span class="label-text text-xs">${s}</span>
+              </label>`).join("")}
+          </div>
+        </div>
+
+        <div class="md:col-span-2">
+          <button id="btn-landing" class="btn btn-primary w-full">Gerar Landing Page</button>
+        </div>
+      </div>
+    </div>
+    ${resultBox()}
+    <script>
+      window._lpLayoutChange = (v) => {
+        document.getElementById('lp-theme-row')?.classList.toggle('hidden', v === 'saas');
+        document.getElementById('lp-sec-generic')?.classList.toggle('hidden', v === 'saas');
+        document.getElementById('lp-sec-saas')?.classList.toggle('hidden', v !== 'saas');
+      };
+    </script>`,
         <label class="form-control md:col-span-2">
           <span class="label-text">Tema DaisyUI</span>
           <select id="lp-theme" class="select select-bordered">
