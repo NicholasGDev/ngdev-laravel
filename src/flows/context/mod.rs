@@ -3,13 +3,17 @@ pub mod templates;
 
 use anyhow::Result;
 use console::style;
-use crate::flows::{deps, docker};
 use dialoguer::{theme::ColorfulTheme, Confirm, Input, MultiSelect};
 use heck::{ToKebabCase, ToPascalCase};
 
 pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!("{}", style("  [ Criar Context DDD ]").yellow().bold());
     println!();
+
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
+        .interact_text()?;
+    let root = project_root.trim_end_matches('/');
 
     let nome_raw: String = Input::with_theme(theme)
         .with_prompt("  Nome do Context (ex: Cliente, Produto, Pedido)")
@@ -24,8 +28,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .interact_text()?;
 
     let base_path: String = Input::with_theme(theme)
-        .with_prompt("  Diretorio base dos Contexts")
-        .default("back/app/Contexts".to_string())
+        .with_prompt("  Diretorio base dos Contexts (relativo ao projeto)")
+        .default("app/Contexts".to_string())
         .interact_text()?;
 
     let namespace_base: String = Input::with_theme(theme)
@@ -51,7 +55,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         "deletar   (DELETE /deletar/{id})",
     ];
     let ops_keys = &["consultar", "detalhar", "criar", "alterar", "deletar"];
-    let defaults = &[true, true, true, true, false];
+    // Todos selecionados por padrão — CRUD completo
+    let defaults = &[true, true, true, true, true];
 
     let selecionados = MultiSelect::with_theme(theme)
         .with_prompt("  Quais operacoes gerar? [Espaco=selecionar, Enter=confirmar]")
@@ -61,10 +66,6 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
 
     let operacoes: Vec<String> = selecionados.iter().map(|&i| ops_keys[i].to_string()).collect();
 
-    let project_root: String = Input::with_theme(theme)
-        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
-        .interact_text()?;
-    let root = project_root.trim_end_matches('/');
     let base_path = if base_path.starts_with('/') { base_path }
                     else { format!("{}/{}", root, base_path) };
 
@@ -76,8 +77,6 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     );
     println!();
 
-    deps::verify_all()?;
-
     generator::generate(&generator::ContextOptions {
         nome: nome.clone(),
         base_path,
@@ -88,14 +87,18 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         operacoes,
     })?;
 
-    docker::generator::scaffold(root, &nome.to_lowercase())?;
-
     println!();
     println!(
         "  {} Context '{}' gerado com sucesso!",
         style("✔").green().bold(),
         style(&nome).white().bold()
     );
+    println!(
+        "  {} Registre o provider em {}",
+        style("LEMBRETE:").yellow().bold(),
+        style("bootstrap/providers.php").white()
+    );
+    println!();
 
     Ok(())
 }
