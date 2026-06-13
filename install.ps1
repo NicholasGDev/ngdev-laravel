@@ -31,13 +31,37 @@ if ($args[0] -eq "--build") {
     Write-Info "Compilando (release)..."
 
     if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-        # Tenta carregar via rustup
-        $rustupEnv = "$env:USERPROFILE\.cargo\env"
+        # Tenta carregar via rustup env
+        $rustupEnv = "$env:USERPROFILE\.cargo\env.ps1"
         if (Test-Path $rustupEnv) {
             . $rustupEnv
-        } else {
-            Write-Err "cargo nao encontrado. Instale em https://rustup.rs"
         }
+    }
+
+    if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+        Write-Warn "cargo nao encontrado. Instalando Rust via rustup..."
+
+        $rustupInstaller = "$env:TEMP\rustup-init.exe"
+        try {
+            Invoke-WebRequest -Uri "https://win.rustup.rs/x86_64" `
+                              -OutFile $rustupInstaller `
+                              -UseBasicParsing
+        } catch {
+            Write-Err "Falha ao baixar rustup-init.exe. Verifique sua conexao e tente novamente.\nOu instale manualmente em https://rustup.rs"
+        }
+
+        & $rustupInstaller -y --default-toolchain stable --no-modify-path
+        if ($LASTEXITCODE -ne 0) { Write-Err "Instalacao do Rust falhou." }
+        Remove-Item $rustupInstaller -Force -ErrorAction SilentlyContinue
+
+        # Carrega o PATH atualizado sem reiniciar o terminal
+        $env:PATH = "$env:USERPROFILE\.cargo\bin;$env:PATH"
+
+        if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+            Write-Err "cargo instalado mas nao encontrado no PATH.\nFeche e reabra o terminal e execute novamente: .\install.ps1 --build"
+        }
+
+        Write-Info "Rust instalado com sucesso."
     }
 
     cargo build --release

@@ -33,10 +33,25 @@ fi
 # ── Build ─────────────────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--build" ]]; then
     info "Compilando (release estatico)..."
+
     if ! command -v cargo &>/dev/null; then
-        # Tenta carregar rustup
-        source "$HOME/.cargo/env" 2>/dev/null || err "cargo nao encontrado. Instale em https://rustup.rs"
+        # Tenta carregar rustup da sessao atual
+        source "$HOME/.cargo/env" 2>/dev/null || true
     fi
+
+    if ! command -v cargo &>/dev/null; then
+        warn "cargo nao encontrado. Instalando Rust via rustup..."
+        if command -v curl &>/dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+        elif command -v wget &>/dev/null; then
+            wget -qO- https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+        else
+            err "curl ou wget nao encontrados. Instale o Rust manualmente em https://rustup.rs"
+        fi
+        source "$HOME/.cargo/env" 2>/dev/null || err "Rust instalado mas cargo nao encontrado. Reabra o terminal e tente novamente."
+        info "Rust instalado com sucesso."
+    fi
+
     rustup target add "${TARGET}" 2>/dev/null || true
     RUSTFLAGS="-C target-feature=+crt-static" \
         cargo build --release --target "${TARGET}"
