@@ -1,0 +1,60 @@
+pub mod generator;
+pub mod templates;
+
+use anyhow::Result;
+use console::style;
+use dialoguer::{theme::ColorfulTheme, Input};
+
+pub fn run(theme: &ColorfulTheme) -> Result<()> {
+    println!("{}", style("  [ Scaffold Logistica Reversa de Sinistros ]").yellow().bold());
+    println!();
+    println!("  {}", style("Gera 7 Contexts DDD + 10 Migrations + 10 Eloquent Models + Manager JSON").dim());
+    println!("  {}", style("Entidades: Seguradora · Transportadora · Segurado · Apolice").dim());
+    println!("  {}", style("           Sinistro · OrdemColeta · LaudoTriagem").dim());
+    println!();
+
+    let base_path: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio base dos Contexts")
+        .default("back/app/Contexts".to_string())
+        .interact_text()?;
+
+    let namespace_base: String = Input::with_theme(theme)
+        .with_prompt("  Namespace base PHP")
+        .default("App\\Contexts".to_string())
+        .interact_text()?;
+
+    let migration_path: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio das Migrations")
+        .default("database/migrations".to_string())
+        .interact_text()?;
+
+    let erp_id: String = Input::with_theme(theme)
+        .with_prompt("  ERP ID (tenant config)")
+        .default("revlog-core-01".to_string())
+        .interact_text()?;
+
+    let company_name: String = Input::with_theme(theme)
+        .with_prompt("  Nome da empresa")
+        .default("Reversa Express Log".to_string())
+        .interact_text()?;
+
+    let warehouse_id: String = Input::with_theme(theme)
+        .with_prompt("  ID do CD (warehouse)")
+        .default("CD-SP-01".to_string())
+        .interact_text()?;
+
+    println!();
+    println!("  {}", style("Gerando estrutura completa...").yellow().bold());
+    println!();
+
+    generator::generate(&generator::LogisticaReversaOptions {
+        base_path,
+        namespace_base,
+        migration_path,
+        erp_id,
+        company_name,
+        warehouse_id,
+    })?;
+
+    Ok(())
+}
