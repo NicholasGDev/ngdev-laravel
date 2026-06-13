@@ -1,130 +1,289 @@
-<div class="flex flex-col items-center gap-6 pt-4">
-      <pre class="text-primary font-mono text-[0.45rem] leading-[1.15] select-none overflow-x-auto max-w-full">
-##########################################################################
-##########################################################################
-##########################################################################
-#################################################################****#####
-###############################################################*=:..:+*###
-##############################################################*-.    .+###
-##############################################################*:      -###
-##############################################################*-     .+###
-##############################################################*: ...:=####
-#####################*****###**+++**##############**+++***###*: -***######
-####################=.....+*=:.    .-+*########*+-.     .-+*+:.-##########
-##############*=-*##=     -.         .=#######+:          .:..=#+#########
-############*=. :*##+                  =#####=.       ..    .=#-.*########
-##########*-.   :*##+       :=++-.     .*###=     .-+***+:..+*- .*########
-########+-.   .=*###+      =#%%%%*:    .+##*.    .+#%%%%%#=+*-  .*########
-######+:    :=#%####+     :#####%%=     =##+.    =#%###%%%#*:   .*########
-#####+.. .:+#%######+     -#######+     =##=    .*#########+    .*########
-#####+...:*#########+.   .=#######+     =##=.   .*#########=    .*########
-#####*:....-+#######+.  ..-#######+.    =##+.   .+#########:.   .*########
-#######+:....:=*####+.....=#######+.....=###: ..=*+*#####*-......*########
-######%%#*-....:=###+.....=#######+.....=##%+..+*-.:-=+=-.......:*########
-########%%#*=...:###+.....=#######+.....=##%%+**-...............:*########
-##########%%%#=::###+.....=#######+.....=#####*:..........--....:*########
-###########%%%%#*###+.....=#######+.....=####*:.-+-:::::=*#=....:*########
-##############%%%###*=----+#######*--=--*###+:.=#%######%##:....:#%%###%##
-####################%%%%%%%######%%%%%#####+::=#*###%#####=:..:.=#%%%%%%%%
-#####################%%%%%########%#######=.:+*-:-=+****+-:.::::#%%%%%%%%%
-#####################################*=-:-::+#-::::::::::::::::*%%%%%%%%%%
-####################################+::::::-#*-::::::::::::::-*%%%#%#%####
-####################################-:::::::*##*+=-:::::::-+*%%%%%#%%%####
-####################################=:::::::*%%%%%########%%%%%%%%#%%%####
-####################################*-:::::+#%%%%%%%%%%%%%%%%%%%%%#%%%####
-###################################%%#*+=+*#%%##%%%%%%%%%%%%%%%%%%%%%%####
-###################################%%%%%%%%#######%%%%%%%%%#%%%%%%#%%%=###
-####################################%%%%%%%%###%%%%%%###%%%#%%%%%%##%%+###
-#####################################%%##%#####%##%%#%%#%%###%%##%#%%%%%%%
-#########################################%####%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-########################################%%##########%%%%%%%%%%%#%%#%%%%%%%
-######################################%%#######%#%#%%#%%%%%%%%%%%%%%%%%%%%
-#######################################%%%%#%#%%%%%%%%%####%%%%%%%%%%%%%%%
-#############%%%###################%##%%%%##%#%%%%%%%%%###%%#%%%%%%%%%#%%%
-</pre>
-          <p class="py-4 text-base-content/70 max-w-md">
-            Gerador de código Laravel com DDD. Selecione um gerador no menu lateral para começar.
-          </p>
-      <p class="text-base-content/60 text-sm">Selecione um gerador no menu lateral para começar.</p>
-      <div class="stats shadow">
-        <div class="stat"><div class="stat-title">Geradores</div><div class="stat-value text-primary">9</div></div>
-        <div class="stat"><div class="stat-title">Plataformas</div><div class="stat-value text-secondary">2</div><div class="stat-desc">Windows · Linux</div></div>
-      </div>
-    </div>`,
----
-
 # ngdev-laravel
 
-> **Gerador interativo de código Laravel com suporte a DDD, Clean Architecture e infraestrutura Docker.**
-> Escrito em Rust — roda via terminal, sem dependências externas.
+> **Gerador interativo de código Laravel com suporte a DDD, Clean Architecture e infraestrutura Docker.**  
+> Escrito em Rust — roda via terminal e via painel gráfico (Tauri). Sem dependências externas.
 
----
+```
+##########################################################################
+#####################*****###**+++**##############**+++***###*: -***######
+########+-.   .=*###+      =#%%%%*:    .+##*.    .+#%%%%%#=+*-  .*########
+######+:    :=#%####+     :#####%%=     =##+.    =#%###%%%#*:   .*########
+##############%%%###*=----+#######*--=--*###+:.=#%######%##:....:#%%###%##
+####################################-:::::::*##*+=-:::::::-+*%%%%%#%%%####
 
-## Fluxograma
-
-```mermaid
-flowchart TD
-    START([▶ ngdev]) --> LOGO[Exibe Logo ASCII\ne Menu Interativo]
-
-    LOGO --> MENU{O que gerar?}
-
-    MENU --> A[Criar Context DDD]
-    MENU --> B[Scaffold Logística Reversa]
-    MENU --> C[Scaffold ERP Estoque]
-    MENU --> D[Gerar Infra Docker]
-    MENU --> E[Criar Model]
-    MENU --> F[Criar Controller]
-    MENU --> G[Criar Migration]
-    MENU --> H[Scaffold PDV]
-    MENU --> EXIT([Sair])
-
-    %% ── Context DDD ──────────────────────────────────────────────────────────
-    A --> A1[Wizard: nome, prefixo,\nnamespace, operações]
-    A1 --> A2[Application Layer\nDTOs · Queries · UseCases\nErrors · Exceptions]
-    A1 --> A3[Domain Layer\nEntities · Enums\nAutorizações]
-    A1 --> A4[Infra Layer\nModels · Repositories\nController · Requests\nRoutes · ServiceProvider]
-    A2 & A3 & A4 --> A5[✅ Context gerado]
-
-    %% ── Logística Reversa ────────────────────────────────────────────────────
-    B --> B1[Wizard: paths,\nnamespace, ERP ID]
-    B1 --> B2[7 Contexts DDD\nSeguradora · Transportadora\nSegurado · Apólice\nSinistro · OrdemColeta\nLaudoTriagem]
-    B1 --> B3[10 Migrations\nordenadas por FK]
-    B1 --> B4[10 Eloquent Models\n+ 3 sub-entidades]
-    B1 --> B5[Manager JSON\nSLA · Webhooks · Carriers]
-    B2 & B3 & B4 & B5 --> B6[✅ Logística Reversa gerada]
-
-    %% ── ERP Estoque ──────────────────────────────────────────────────────────
-    C --> C1[Wizard: paths,\nnamespace, método custeio]
-    C1 --> C2[6 Contexts DDD\nArmazem · Fornecedor\nProduto · PedidoCompra\nMovimentacaoEstoque\nInventario]
-    C1 --> C3[10 Migrations\nordm decimal 12,3]
-    C1 --> C4[10 Models + 4 sub-entidades\nPosicaoEstoque · Lote\nItemPedidoCompra\nContagemInventario]
-    C1 --> C5[UseCases especiais\nKardex saldo_apos_movimento\nFecharInventario c/ ajustes]
-    C1 --> C6[Manager JSON\nSLA · PEPS · Ressuprimento]
-    C2 & C3 & C4 & C5 & C6 --> C7[✅ ERP Estoque gerado]
-
-    %% ── Docker ───────────────────────────────────────────────────────────────
-    D --> D1[Wizard: PHP · Node\nBancos · Redis · Mailpit]
-    D1 --> D2[Dockerfile.dev\nPHP 8.3-fpm · Xdebug\nComposer · Node.js\n+30 extensões PHP]
-    D1 --> D3[Dockerfile.prod\nMulti-stage build\nComposer → Node → Runtime]
-    D1 --> D4[docker-compose\ndev + prod\nMySQL · MariaDB · PostgreSQL\nSQL Server · Redis · Mailpit]
-    D1 --> D5[Nginx · PHP-FPM · Supervisor\nXdebug ini · OPcache JIT\n.env.example · Makefile]
-    D2 & D3 & D4 & D5 --> D6[✅ Infra Docker gerada]
-
-    %% ── Outros ───────────────────────────────────────────────────────────────
-    E --> E1[Model Eloquent\n+ Migration opcional\n+ Controller opcional]
-    F --> F1[Controller plain\nou Resource com Model]
-    G --> G1[Migration com\nSchema::create]
-    H --> H1[Scaffold PDV\nMigrations + Models\nPonto de Venda]
-
-    E1 & F1 & G1 & H1 --> DONE([✅ Arquivo gerado])
+                    ╔══════════════════════════════════════╗
+                    ║           Ng Development             ║
+                    ║              Laravel                 ║
+                    ║          context creator             ║
+                    ╚══════════════════════════════════════╝
 ```
 
 ---
 
-## O que o ngdev-laravel fornece
+## Sumário
 
-### 🏗️ Gerador de Context DDD
-Cria a estrutura completa de um bounded context seguindo **DDD + Clean Architecture**:
+- [Visão Geral](#visão-geral)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Fluxo 1 — Menu Principal](#fluxo-1--menu-principal)
+- [Fluxo 2 — Context DDD](#fluxo-2--context-ddd)
+- [Fluxo 3 — Scaffolds Completos](#fluxo-3--scaffolds-completos-logística--estoque--pdv)
+- [Fluxo 4 — Infra Docker](#fluxo-4--infra-docker)
+- [Fluxo 5 — Landing Page](#fluxo-5--landing-page)
+- [Fluxo 6 — Geradores Avulsos](#fluxo-6--geradores-avulsos)
+- [Geradores em Detalhe](#geradores-em-detalhe)
+- [Painel Gráfico — ngdev Manager](#painel-gráfico--ngdev-manager-tauri)
+- [Instalação](#instalação-e-uso)
+- [Licença](#licença)
+
+---
+
+## Visão Geral
+
+O `ngdev` gera scaffolding completo para projetos Laravel com DDD e Clean Architecture. Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto informado pelo usuário** — nunca dentro do próprio projeto `ngdev`.
+
+| Modo | Como rodar |
+|---|---|
+| **CLI interativo** | `ngdev` no terminal |
+| **Painel desktop** | `tauri dev` (dev) ou binário `ngdev-manager` (prod) |
+
+**9 geradores disponíveis:**
+
+| # | Gerador | O que entrega |
+|---|---|---|
+| 1 | Context DDD | Bounded context completo (Application + Domain + Infra) |
+| 2 | Logística Reversa | 7 Contexts + 10 Migrations + 10 Models + Manager JSON |
+| 3 | ERP Estoque | 6 Contexts + Kardex + UseCases + Manager JSON |
+| 4 | Infra Docker | Dockerfile dev/prod + compose + Nginx + Makefile |
+| 5 | Landing Page | HTML + Tailwind + DaisyUI (generic) ou Contabilizei-style (SaaS) |
+| 6 | Model | Eloquent + Migration + Controller opcionais |
+| 7 | Controller | Plain ou Resource com Model |
+| 8 | Migration | Schema::create com strict_types |
+| 9 | PDV | Scaffold completo Ponto de Venda |
+
+---
+
+## Estrutura do Projeto
+
+```
+ngdev-laravel/
+├── src/
+│   ├── main.rs                  ← CLI: menu interativo + ASCII logo
+│   ├── cli.rs                   ← Structs de args compartilhados
+│   └── flows/
+│       ├── context/             ← Gerador Context DDD
+│       ├── docker/              ← Gerador Infra Docker
+│       ├── estoque/             ← Scaffold ERP Estoque
+│       ├── landing_page/        ← Gerador Landing Page (generic + saas)
+│       │   ├── templates.rs     ← Layout DaisyUI generic
+│       │   └── templates_saas.rs← Layout Contabilizei-style
+│       ├── logistica_reversa/   ← Scaffold Logística Reversa
+│       ├── pdv/                 ← Scaffold PDV
+│       └── artesanal/
+│           ├── controller/      ← Gerador Controller
+│           ├── model/           ← Gerador Model
+│           └── migration/       ← Gerador Migration
+├── manager/                     ← Crate Tauri (painel desktop)
+│   ├── src/
+│   │   ├── lib.rs               ← Tauri app builder
+│   │   └── commands.rs          ← Bridge frontend → geradores Rust
+│   └── tauri.conf.json
+├── frontend-installer/          ← SPA Vite + TypeScript + Tailwind + DaisyUI
+│   ├── index.html               ← Layout drawer (sidebar + main)
+│   └── src/main.ts              ← Páginas e handlers dos 9 geradores
+├── Cargo.toml                   ← Workspace (ngdev-laravel + manager)
+└── install.sh                   ← Instala ngdev em /usr/local/bin
+```
+
+---
+
+## Fluxo 1 — Menu Principal
+
+```mermaid
+flowchart TD
+    START([▶ ngdev]) --> LOGO[Exibe ASCII Logo\nNg Development · Laravel]
+    LOGO --> MENU{Selecione o gerador}
+
+    MENU --> G1[🏗 Context DDD]
+    MENU --> G2[🚚 Logística Reversa]
+    MENU --> G3[📦 ERP Estoque]
+    MENU --> G4[🐳 Infra Docker]
+    MENU --> G5[🌐 Landing Page]
+    MENU --> G6[🗃 Model]
+    MENU --> G7[🎮 Controller]
+    MENU --> G8[📋 Migration]
+    MENU --> G9[🧾 PDV]
+    MENU --> EXIT([Sair])
+
+    G1 --> FLOW_CTX([→ ver Fluxo 2])
+    G2 & G3 & G9 --> FLOW_SC([→ ver Fluxo 3])
+    G4 --> FLOW_DOC([→ ver Fluxo 4])
+    G5 --> FLOW_LP([→ ver Fluxo 5])
+    G6 & G7 & G8 --> FLOW_ART([→ ver Fluxo 6])
+```
+
+---
+
+## Fluxo 2 — Context DDD
+
+```mermaid
+flowchart TD
+    IN([Gerador Context DDD]) --> W1[Nome do Context\nex: Produto → PascalCase automático]
+    W1 --> W2[Prefixo de rota\nkebab-case auto-sugerido]
+    W2 --> W3[Namespace base PHP\nex: App\\\\Contexts]
+    W3 --> W4[Diretório base dos Contexts\nex: back/app/Contexts]
+    W4 --> W5{Gerar Domain Entity?}
+    W5 --> W6{Gerar Autorizações?}
+    W6 --> W7[MultiSelect: operações\nconsultar · detalhar · criar · alterar · deletar]
+    W7 --> W8[Caminho absoluto do projeto Laravel\nex: /home/user/meu-projeto]
+
+    W8 --> APP & DOM & INF
+
+    subgraph APP [Application Layer]
+        A1[DTOs Input — readonly class]
+        A2[DTOs Output — simples e paginado]
+        A3[Queries — GET consultar / detalhar]
+        A4[UseCases — POST criar · PUT alterar · DELETE deletar]
+        A5[Errors · Exceptions]
+    end
+
+    subgraph DOM [Domain Layer]
+        D1[Entity — ::create e ::update]
+        D2[Enums de status]
+        D3[Autorizações — se selecionado]
+    end
+
+    subgraph INF [Infra Layer]
+        I1[Eloquent Model]
+        I2[Repository]
+        I3[Controller + FormRequests]
+        I4[Routes · ServiceProvider]
+    end
+
+    APP & DOM & INF --> OK([✅ Context gerado\nem /projeto/base_path/NomeContext/])
+```
+
+---
+
+## Fluxo 3 — Scaffolds Completos (Logística · Estoque · PDV)
+
+```mermaid
+flowchart TD
+    subgraph LOG [🚚 Logística Reversa de Sinistros]
+        L1[paths · namespace · ERP ID\ncompany · warehouse] --> L2[Caminho absoluto do projeto]
+        L2 --> LA[7 Contexts DDD\nSeguradora · Transportadora · Segurado\nApólice · Sinistro · OrdemColeta · LaudoTriagem]
+        L2 --> LB[10 Migrations ordenadas por FK\ndeclare strict + índices + comentários]
+        L2 --> LC[10 Eloquent Models\n+ ItemSinistrado · MovimentacaoLogistica · RecebimentoCd]
+        L2 --> LD[Manager JSON\nSLA · Webhooks exponential_backoff · Intelipost Reverse]
+        LA & LB & LC & LD --> LOK([✅ Logística gerada])
+    end
+
+    subgraph EST [📦 ERP Estoque]
+        E1[paths · namespace\nmétodo custeio PEPS / Custo Médio] --> E2[Caminho absoluto do projeto]
+        E2 --> EA[6 Contexts DDD\nArmazem · Fornecedor · Produto\nPedidoCompra · MovimentacaoEstoque · Inventario]
+        E2 --> EB[10 Migrations decimal 12-3\nmulti-armazém · lote · inventário]
+        E2 --> EC[10 Models + 4 sub-entidades\nPosicaoEstoque · Lote\nItemPedidoCompra · ContagemInventario]
+        E2 --> ED[UseCases com regra de negócio\nRegistrarMovimentacao — Kardex imutável\nFecharInventario — ajuste_ganho / ajuste_perda]
+        E2 --> EE[Manager JSON\nPEPS · Custo Médio · alerta vencimento · ressuprimento]
+        EA & EB & EC & ED & EE --> EOK([✅ ERP Estoque gerado])
+    end
+
+    subgraph PDV [🧾 Scaffold PDV]
+        P1[Modo: Tudo / Só Migrations / Só Models] --> P2[Caminho absoluto do projeto]
+        P2 --> PA[Migrations Ponto de Venda]
+        P2 --> PB[Eloquent Models PDV]
+        PA & PB --> POK([✅ PDV gerado])
+    end
+```
+
+---
+
+## Fluxo 4 — Infra Docker
+
+```mermaid
+flowchart TD
+    IN([Gerador Docker]) --> W1[Nome da aplicação]
+    W1 --> W2[Output path — raiz do projeto Laravel]
+    W2 --> W3[server_name Nginx\nex: localhost ou app.local]
+    W3 --> W4[Versão PHP — 8.3 · 8.2 · 8.1]
+    W4 --> W5[Versão Node — 22 LTS · 20 LTS]
+    W5 --> W6[MultiSelect: bancos\nMySQL · MariaDB · PostgreSQL · SQL Server · SQLite]
+    W6 --> W7{Redis?}
+    W7 --> W8{Mailpit?}
+
+    W8 --> DEV[Dockerfile.dev\nPHP-fpm + Xdebug + Composer + Node + 30 ext]
+    W8 --> PROD[Dockerfile.prod\nMulti-stage: composer → node → runtime]
+    W8 --> COMPOSE[docker-compose.dev.yml\ndocker-compose.prod.yml]
+    W8 --> CONF[php-dev.ini · php-prod.ini · xdebug.ini · www.conf\nnginx.conf · default.conf · my.cnf · supervisord.conf]
+    W8 --> EXTRA[.dockerignore · .env.example\nMakefile — up / down / build / shell / artisan / migrate]
+
+    DEV & PROD & COMPOSE & CONF & EXTRA --> OK([✅ Infra Docker gerada])
+```
+
+---
+
+## Fluxo 5 — Landing Page
+
+```mermaid
+flowchart TD
+    IN([Gerador Landing Page]) --> L1{Layout base}
+
+    L1 -- Generic DaisyUI --> GEN[produto · tagline · empresa]
+    L1 -- SaaS Contabilizei-style --> SAAS[produto · tagline · empresa]
+
+    GEN --> GT[Tema DaisyUI\nlight · dark · corporate · lofi · business\ncupcake · cyberpunk · forest · luxury · night]
+    GT --> GS[MultiSelect seções\nlogos · features_grid · features_tabs · stats\ntestimonials · pricing · faq · cta_bottom]
+
+    SAAS --> SS[MultiSelect seções\nsocial_proof · comparison_table · journey_selector\nbenefits_slider · content_grid · testimonials_photo · faq]
+
+    GS --> OUT[Caminho absoluto de saída\nex: /home/user/projetos/minha-landing]
+    SS --> OUT
+
+    OUT --> IDX[index.html — página completa montada]
+    OUT --> NAV[sections/navbar/index.html]
+    OUT --> HERO[sections/hero/index.html]
+    OUT --> SEC[sections/nome_secao/index.html\npara cada seção selecionada]
+    OUT --> FOOT[sections/footer/index.html]
+
+    IDX & NAV & HERO & SEC & FOOT --> OK([✅ Landing Page gerada])
+```
+
+---
+
+## Fluxo 6 — Geradores Avulsos
+
+```mermaid
+flowchart TD
+    subgraph MOD [🗃 Model]
+        M1[Nome — ex: Produto] --> M2{+ Migration?}
+        M2 --> M3{+ Controller?}
+        M3 --> M4[Caminho absoluto do projeto]
+        M4 --> MA[app/Models/Produto.php\nfillable · hidden · table]
+        M4 --> MB[database/migrations/..._create_produtos_table.php]
+        M4 --> MC[app/Http/Controllers/ProdutoController.php]
+        MA & MB & MC --> MOK([✅ Model gerado])
+    end
+
+    subgraph CTRL [🎮 Controller]
+        C1[Nome — ex: ProdutoController] --> C2{Resource Controller?}
+        C2 --> C3[Model opcional — type-hint automático]
+        C3 --> C4[Caminho absoluto do projeto]
+        C4 --> CA[app/Http/Controllers/ProdutoController.php\nindex · create · store · show · edit · update · destroy]
+        CA --> COK([✅ Controller gerado])
+    end
+
+    subgraph MIG [📋 Migration]
+        G1[Nome — ex: create_produtos_table] --> G2[Table opcional\nauto-inferida do nome]
+        G2 --> G3[Caminho absoluto do projeto]
+        G3 --> GA[database/migrations/YYYY_MM_DD_HHMMSS_nome.php\ndeclare strict + Schema::create + timestamps]
+        GA --> GOK([✅ Migration gerada])
+    end
+```
+
+---
+
+## Geradores em Detalhe
+
+### 🏗️ Context DDD
 
 | Camada | O que gera |
 |---|---|
@@ -132,12 +291,9 @@ Cria a estrutura completa de um bounded context seguindo **DDD + Clean Architect
 | **Domain** | Entity (com `::create()` / `::update()`) · Enums · Autorizações |
 | **Infra** | Eloquent Model · Repository · Controller · FormRequests · Routes · ServiceProvider |
 
-Opções interativas: escolha de operações (consultar/detalhar/criar/alterar/deletar), namespace base, prefixo de rota, geração de Entity e Autorizações.
-
 ---
 
-### 🚚 Scaffold — Logística Reversa de Sinistros
-Gera em uma única execução o sistema completo de logística reversa para sinistros de seguros:
+### 🚚 Logística Reversa de Sinistros
 
 - **7 Contexts DDD** — Seguradora, Transportadora, Segurado, Apólice, Sinistro, OrdemColeta, LaudoTriagem
 - **3 sub-entidades** — ItemSinistrado, MovimentacaoLogistica, RecebimentoCd
@@ -147,12 +303,11 @@ Gera em uma única execução o sistema completo de logística reversa para sini
 
 ---
 
-### 📦 Scaffold — ERP de Estoque
-Gera o núcleo de um ERP de gestão de estoque multi-armazém:
+### 📦 ERP de Estoque
 
-- **6 Contexts DDD** — Armazem, Fornecedor, Produto, PedidoCompra, MovimentacaoEstoque *(Kardex imutável, sem PUT/DELETE)*, Inventario
+- **6 Contexts DDD** — Armazem, Fornecedor, Produto, PedidoCompra, MovimentacaoEstoque *(Kardex imutável — sem PUT/DELETE)*, Inventario
 - **4 sub-entidades** — PosicaoEstoque, Lote, ItemPedidoCompra, ContagemInventario
-- **UseCases especiais com regra de negócio real:**
+- **UseCases especiais:**
   - `RegistrarMovimentacaoUseCase` — calcula `saldo_apos_movimento`, bloqueia estoque negativo
   - `FecharInventarioUseCase` — gera ajustes `ajuste_ganho`/`ajuste_perda` no Kardex automaticamente
 - **10 Migrations** com `decimal(12,3)` para suporte a KG/Litros
@@ -161,7 +316,6 @@ Gera o núcleo de um ERP de gestão de estoque multi-armazém:
 ---
 
 ### 🐳 Infra Docker (DEV + PROD)
-Gera toda a infraestrutura containerizada:
 
 | Arquivo | Descrição |
 |---|---|
@@ -185,25 +339,84 @@ Gera toda a infraestrutura containerizada:
 
 ---
 
-### 🗂️ Geradores Avulsos
-- **Model** — Eloquent com `$fillable`, `$hidden`, `$table`, opção de gerar Migration e Controller juntos
-- **Controller** — plain ou resource com type-hint do Model
-- **Migration** — `Schema::create` com `declare(strict_types=1)`
-- **PDV Scaffold** — conjunto completo de migrations e models para Ponto de Venda
+### 🌐 Landing Page
+
+Dois layouts disponíveis — cada seção em **diretório próprio**:
+
+**Generic (DaisyUI)** — 10 temas:
+`logos` · `features_grid` · `features_tabs` · `stats` · `testimonials` · `pricing` · `faq` · `cta_bottom`
+
+**SaaS (Contabilizei-style)** — fundo branco, verde:
+`social_proof` · `comparison_table` · `journey_selector` · `benefits_slider` · `content_grid` · `testimonials_photo` · `faq`
+
+Estrutura de saída:
+```
+minha-landing/
+  index.html
+  sections/
+    navbar/index.html
+    hero/index.html
+    features_grid/index.html
+    pricing/index.html
+    footer/index.html
+    ...
+```
 
 ---
 
-## Instalação e uso
+## Painel Gráfico — ngdev Manager (Tauri)
+
+Interface desktop construída com **Tauri v2 + Vite + TypeScript + Tailwind CSS + DaisyUI**.
+
+```
+manager/              ← crate Rust (Tauri backend)
+frontend-installer/   ← SPA com 9 telas, uma por gerador
+```
+
+Para rodar em modo de desenvolvimento:
 
 ```bash
-# Compilar
-cargo build --release
+cd manager
+tauri dev
+# O Vite frontend inicia automaticamente em http://localhost:1420
+```
+
+Para build de produção:
+
+```bash
+cd manager
+tauri build
+```
+
+---
+
+## Instalação e Uso
+
+### CLI
+
+```bash
+# Compilar e instalar globalmente em /usr/local/bin
+./install.sh --build
 
 # Executar
-./target/release/ngdev
+ngdev
 
-# Ou direto pelo cargo
+# Ou sem instalar
 cargo run
+```
+
+### Desinstalar
+
+```bash
+./install.sh --uninstall
+```
+
+### Compilar binário estático (musl)
+
+```bash
+rustup target add x86_64-unknown-linux-musl
+RUSTFLAGS="-C target-feature=+crt-static" \
+  cargo build --release --target x86_64-unknown-linux-musl
 ```
 
 ---
@@ -211,25 +424,5 @@ cargo run
 ## Licença
 
 ```
-MIT License
-
-Copyright (c) 2026 Ng Development
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+MIT License — Copyright (c) 2026 Ng Development
 ```
