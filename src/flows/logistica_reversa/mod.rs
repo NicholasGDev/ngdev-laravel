@@ -44,8 +44,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .interact_text()?;
 
     let project_root: String = Input::with_theme(theme)
-        .with_prompt("  Diretorio raiz do projeto Laravel (onde salvar)")
-        .default(".".to_string())
+        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
         .interact_text()?;
     let root = project_root.trim_end_matches('/');
     let base_path = if base_path.starts_with('/') { base_path }

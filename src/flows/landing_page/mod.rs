@@ -109,8 +109,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     };
 
     let output_dir: String = Input::with_theme(theme)
-        .with_prompt("  Diretório de saída")
-        .default("landing".to_string())
+        .with_prompt("  Caminho absoluto de saída (ex: /home/user/projetos/minha-landing)")
         .interact_text()?;
 
     println!();

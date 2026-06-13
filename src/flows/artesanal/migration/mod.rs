@@ -19,8 +19,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .interact_text()?;
 
     let project_root: String = Input::with_theme(theme)
-        .with_prompt("  Diretorio raiz do projeto Laravel")
-        .default(".".to_string())
+        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
         .interact_text()?;
 
     generator::generate(&crate::cli::MigrationArgs {
