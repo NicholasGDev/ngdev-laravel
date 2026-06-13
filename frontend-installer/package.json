@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "start": "vite --port 1420 --strictPort",
     "dev": "vite --port 1420 --strictPort",
     "build": "vite build",
     "preview": "vite preview"
