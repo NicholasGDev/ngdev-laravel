@@ -1,4 +1,5 @@
 use super::templates as tmpl;
+use crate::flows::deps;
 use anyhow::Result;
 use console::style;
 use std::fs;
@@ -20,6 +21,9 @@ pub fn generate(opts: &ContextOptions) -> Result<()> {
     let base = PathBuf::from(&opts.base_path).join(name);
     let prefix = &opts.prefixo;
     let ops = &opts.operacoes;
+
+    // ── Verificação de dependências ──────────────────────────────────────────
+    deps::verify_all()?;
 
     // ── Application/DTOs/Inputs ──────────────────────────────────────────────
     if ops.contains(&"criar".to_string()) {

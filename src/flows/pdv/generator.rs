@@ -1,4 +1,5 @@
 use crate::cli::PdvArgs;
+use crate::flows::deps;
 use super::templates;
 use anyhow::Result;
 use std::fs;
@@ -6,6 +7,9 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn generate(args: &PdvArgs) -> Result<()> {
+    // ── Verificação de dependências ───────────────────────────────────────────
+    deps::verify_all()?;
+
     let root = PathBuf::from(&args.project_root);
     fs::create_dir_all(&root)?;
 

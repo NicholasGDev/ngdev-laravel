@@ -1,4 +1,5 @@
 use crate::flows::context::generator::{generate as gen_context, ContextOptions};
+use crate::flows::deps;
 use super::templates as tmpl;
 use anyhow::Result;
 use console::style;
@@ -18,6 +19,9 @@ pub struct LogisticaReversaOptions {
 pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
     let ns = &opts.namespace_base;
     let base = &opts.base_path;
+
+    // ── Verificação de dependências ──────────────────────────────────────────
+    deps::verify_all()?;
 
     println!();
     println!("  {}", style("[ 1/4 ] Gerando DDD Contexts...").cyan().bold());
