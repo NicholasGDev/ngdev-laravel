@@ -3,6 +3,8 @@
 // Módulo compartilhado por todos os flows de geração de arquitetura DDD.
 // Verifica (e tenta instalar automaticamente) PHP LTS, Composer e PostgreSQL.
 
+#![allow(dead_code)]
+
 use anyhow::{bail, Result};
 use console::style;
 use std::fs;
