@@ -1,3 +1,5 @@
+<div class="flex flex-col items-center gap-6 pt-4">
+      <pre class="text-primary font-mono text-[0.45rem] leading-[1.15] select-none overflow-x-auto max-w-full">
 ##########################################################################
 ##########################################################################
 ##########################################################################
@@ -39,17 +41,16 @@
 ######################################%%#######%#%#%%#%%%%%%%%%%%%%%%%%%%%
 #######################################%%%%#%#%%%%%%%%%####%%%%%%%%%%%%%%%
 #############%%%###################%##%%%%##%#%%%%%%%%%###%%#%%%%%%%%%#%%%
-
-
-
-                    ╔══════════════════════════════════════╗
-                    ║                                      ║
-                    ║           Ng Development             ║
-                    ║              Laravel                 ║
-                    ║          context creator             ║
-                    ║                                      ║
-                    ╚══════════════════════════════════════╝
-
+</pre>
+          <p class="py-4 text-base-content/70 max-w-md">
+            Gerador de código Laravel com DDD. Selecione um gerador no menu lateral para começar.
+          </p>
+      <p class="text-base-content/60 text-sm">Selecione um gerador no menu lateral para começar.</p>
+      <div class="stats shadow">
+        <div class="stat"><div class="stat-title">Geradores</div><div class="stat-value text-primary">9</div></div>
+        <div class="stat"><div class="stat-title">Plataformas</div><div class="stat-value text-secondary">2</div><div class="stat-desc">Windows · Linux</div></div>
+      </div>
+    </div>`,
 ---
 
 # ngdev-laravel
