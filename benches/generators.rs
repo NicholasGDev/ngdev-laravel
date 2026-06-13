@@ -116,8 +116,9 @@ fn bench_landing_page(c: &mut Criterion) {
                             tagline: "Lorem ipsum dolor sit amet.".into(),
                             company_name: "Acme Inc".into(),
                             theme: "corporate".into(),
+                            layout: "generic".into(),
                             sections: secs.clone(),
-                            output_file: out.to_string_lossy().to_string(),
+                            output_dir: out.to_string_lossy().to_string(),
                         },
                     ))
                     .unwrap()
@@ -151,8 +152,9 @@ fn bench_landing_themes(c: &mut Criterion) {
                             tagline: "Lorem ipsum.".into(),
                             company_name: "Demo Corp".into(),
                             theme: t.to_string(),
+                            layout: "generic".into(),
                             sections: sections.clone(),
-                            output_file: out.to_string_lossy().to_string(),
+                            output_dir: out.to_string_lossy().to_string(),
                         },
                     ))
                     .unwrap()
