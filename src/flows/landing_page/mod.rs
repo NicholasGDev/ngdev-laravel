@@ -82,9 +82,9 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .map(|&i| section_keys[i].to_string())
         .collect();
 
-    let output_file: String = Input::with_theme(theme)
-        .with_prompt("  Arquivo de saída")
-        .default("landing.html".to_string())
+    let output_dir: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio de saida")
+        .default("landing".to_string())
         .interact_text()?;
 
     println!();
@@ -97,7 +97,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         company_name,
         theme: selected_theme.to_string(),
         sections,
-        output_file,
+        output_dir,
     })?;
 
     Ok(())

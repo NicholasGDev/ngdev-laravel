@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scrollbar customizada para combinar com o tema dark */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: hsl(var(--b2)); }
+::-webkit-scrollbar-thumb  { background: hsl(var(--p)); border-radius: 3px; }

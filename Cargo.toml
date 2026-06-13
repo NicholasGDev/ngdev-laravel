@@ -1,3 +1,7 @@
+[workspace]
+members  = [".", "manager"]
+resolver = "2"
+
 [package]
 name = "ngdev-laravel"
 version = "0.1.0"

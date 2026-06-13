@@ -8,11 +8,13 @@ use std::path::PathBuf;
 pub fn generate(args: &ModelArgs) -> Result<()> {
     let name = args.name.to_pascal_case();
     let table = name.to_snake_case() + "s";
+    let root = PathBuf::from(&args.project_root);
 
     let content = templates::render(&name, &table)?;
-    let path = PathBuf::from(format!("app/Models/{}.php", name));
-
-    write_file(&path, &content)?;
+    let dir = root.join("app/Models");
+    fs::create_dir_all(&dir)?;
+    let path = dir.join(format!("{}.php", name));
+    fs::write(&path, &content)?;
     println!("Created: {}", path.display());
 
     if args.migration {
@@ -20,6 +22,7 @@ pub fn generate(args: &ModelArgs) -> Result<()> {
         crate::flows::artesanal::migration::generator::generate(&crate::cli::MigrationArgs {
             name: migration_name,
             table: Some(table),
+            project_root: args.project_root.clone(),
         })?;
     }
 
@@ -28,16 +31,9 @@ pub fn generate(args: &ModelArgs) -> Result<()> {
             name: format!("{}Controller", name),
             resource: true,
             model: Some(name),
+            project_root: args.project_root.clone(),
         })?;
     }
 
-    Ok(())
-}
-
-fn write_file(path: &PathBuf, content: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(path, content)?;
     Ok(())
 }

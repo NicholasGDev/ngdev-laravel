@@ -15,11 +15,10 @@ pub fn generate(args: &ControllerArgs) -> Result<()> {
         templates::render_plain(&name)?
     };
 
-    let path = PathBuf::from(format!("app/Http/Controllers/{}.php", name));
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    let root = PathBuf::from(&args.project_root);
+    let dir = root.join("app/Http/Controllers");
+    fs::create_dir_all(&dir)?;
+    let path = dir.join(format!("{}.php", name));
     fs::write(&path, content)?;
     println!("Created: {}", path.display());
 

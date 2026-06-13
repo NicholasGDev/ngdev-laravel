@@ -23,10 +23,16 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .default(false)
         .interact()?;
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio raiz do projeto Laravel")
+        .default(".".to_string())
+        .interact_text()?;
+
     generator::generate(&crate::cli::ModelArgs {
         name: nome,
         migration: com_migration,
         controller: com_controller,
+        project_root,
     })?;
 
     Ok(())

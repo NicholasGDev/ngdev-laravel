@@ -3,7 +3,7 @@ pub mod templates;
 
 use anyhow::Result;
 use console::style;
-use dialoguer::{theme::ColorfulTheme, Select};
+use dialoguer::{theme::ColorfulTheme, Input, Select};
 
 pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!("{}", style("  [ Scaffold PDV ]").yellow().bold());
@@ -21,9 +21,15 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .default(0)
         .interact()?;
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio raiz do projeto Laravel")
+        .default(".".to_string())
+        .interact_text()?;
+
     generator::generate(&crate::cli::PdvArgs {
         migrations_only: selecao == 1,
         models_only: selecao == 2,
+        project_root,
     })?;
 
     Ok(())

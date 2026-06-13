@@ -13,11 +13,10 @@ pub fn generate(args: &MigrationArgs) -> Result<()> {
         .unwrap_or_else(|| extract_table_from_name(&args.name));
 
     let content = templates::render(&args.name, &table)?;
-    let path = PathBuf::from(format!("database/migrations/{}.php", filename));
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    let root = PathBuf::from(&args.project_root);
+    let dir = root.join("database/migrations");
+    fs::create_dir_all(&dir)?;
+    let path = dir.join(format!("{}.php", filename));
     fs::write(&path, &content)?;
     println!("Created: {}", path.display());
 

@@ -23,10 +23,16 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .allow_empty(true)
         .interact_text()?;
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio raiz do projeto Laravel")
+        .default(".".to_string())
+        .interact_text()?;
+
     generator::generate(&crate::cli::ControllerArgs {
         name: nome,
         resource,
         model: if model_nome.trim().is_empty() { None } else { Some(model_nome) },
+        project_root,
     })?;
 
     Ok(())
