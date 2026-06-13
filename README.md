@@ -259,7 +259,7 @@ flowchart TD
         ML2 --> ML4[10 Models — App\\Models\nSeguradora · Transportadora · Segurado · Apolice\nSinistro · ItemSinistrado · OrdemColeta\nMovimentacaoLogistica · RecebimentoCd · LaudoTriagem]
         ML2 --> ML5[7 Services — App\\Services\nOrdemColetaService com registrarMovimentacao]
         ML2 --> ML6[7 Controllers — App\\Http\\Controllers\\Logistica\nvalidação inline + rota de tracking]
-        ML2 --> ML7[routes/api_erp_logistica.php\napiResource + POST ordens-coleta/{id}/movimentacoes]
+        ML2 --> ML7["routes/api_erp_logistica.php<br/>apiResource + POST ordens-coleta/{id}/movimentacoes"]
         ML3 & ML4 & ML5 & ML6 & ML7 --> MLOK([✅ ERP Logística MVCS])
     end
 
