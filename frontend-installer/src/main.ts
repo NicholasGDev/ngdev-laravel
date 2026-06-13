@@ -325,34 +325,6 @@ const pages: Record<string, () => string> = {
         document.getElementById('lp-sec-saas')?.classList.toggle('hidden', v !== 'saas');
       };
     </script>`,
-        <label class="form-control md:col-span-2">
-          <span class="label-text">Tema DaisyUI</span>
-          <select id="lp-theme" class="select select-bordered">
-            <option value="dark">dark</option>
-            <option value="light">light</option>
-            <option value="corporate">corporate</option>
-            <option value="retro">retro</option>
-            <option value="cyberpunk">cyberpunk</option>
-          </select>
-        </label>
-
-        <div class="md:col-span-2">
-          <p class="label-text mb-2">Seções</p>
-          <div class="flex flex-wrap gap-3">
-            ${["logos","features_grid","features_tabs","stats","testimonials","pricing","faq","cta_bottom"].map(s => `
-              <label class="label cursor-pointer gap-2">
-                <input type="checkbox" class="checkbox checkbox-primary lp-sec" value="${s}" checked />
-                <span class="label-text text-xs">${s}</span>
-              </label>`).join("")}
-          </div>
-        </div>
-
-        <div class="md:col-span-2">
-          <button id="btn-landing" class="btn btn-primary w-full">Gerar Landing Page</button>
-        </div>
-      </div>
-    </div>
-    ${resultBox()}`,
 
   // Controller
   controller: () => `
@@ -519,16 +491,19 @@ function attachHandlers(page: string) {
       break;
 
     case "landing":
-      document.getElementById("btn-landing")?.addEventListener("click", () =>
+      document.getElementById("btn-landing")?.addEventListener("click", () => {
+        const layout = val("lp-layout");
+        const isSaas = layout === "saas";
         runCommand("generate_landing_page", {
           product_name: val("lp-prod"),
           tagline: val("lp-tag"),
           company_name: val("lp-company"),
-          theme: val("lp-theme"),
-          sections: checkedValues("lp-sec"),
+          theme: isSaas ? "light" : val("lp-theme"),
+          layout,
+          sections: isSaas ? checkedValues("lp-sec-saas-chk") : checkedValues("lp-sec"),
           output_dir: val("lp-out") || "landing",
-        })
-      );
+        });
+      });
       break;
 
     case "controller":
