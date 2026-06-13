@@ -2,7 +2,7 @@
 applyTo: 'back/app/Contexts/**'
 ---
 
-# Arquitetura de Contexts — Zeus Retail Evolution
+# Arquitetura de Contexts — ngdev Laravel
 
 > Regras obrigatórias para geração de código em `back/app/Contexts/`.
 > Seguem DDD + Clean Architecture. Desvios devem ser aprovados explicitamente.

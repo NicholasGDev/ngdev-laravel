@@ -52,41 +52,51 @@
 
 - [Visão Geral](#visão-geral)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Fluxo 1 — Menu Principal](#fluxo-1--menu-principal)
-- [Fluxo 2 — Context DDD](#fluxo-2--context-ddd)
-- [Fluxo 3 — Scaffolds Completos](#fluxo-3--scaffolds-completos-logística--estoque--pdv)
-- [Fluxo 4 — Infra Docker](#fluxo-4--infra-docker)
-- [Fluxo 5 — Landing Page](#fluxo-5--landing-page)
-- [Fluxo 6 — Geradores Avulsos](#fluxo-6--geradores-avulsos)
+- [Menu Principal](#menu-principal)
+- [Fluxo — Context DDD](#fluxo--context-ddd)
+- [Fluxo — Scaffolds DDD Completos](#fluxo--scaffolds-ddd-completos)
+- [Fluxo — Scaffolds MVCS](#fluxo--scaffolds-mvcs-padrão-laravel)
+- [Fluxo — Infra Docker](#fluxo--infra-docker)
+- [Fluxo — Landing Page](#fluxo--landing-page)
+- [Fluxo — Geradores Avulsos (MVCS)](#fluxo--geradores-avulsos-mvcs)
 - [Geradores em Detalhe](#geradores-em-detalhe)
 - [Painel Gráfico — ngdev Manager](#painel-gráfico--ngdev-manager-tauri)
 - [Instalação](#instalação-e-uso)
+- [Changelog](#changelog)
 - [Licença](#licença)
 
 ---
 
 ## Visão Geral
 
-O `ngdev` gera scaffolding completo para projetos Laravel com DDD e Clean Architecture. Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto informado pelo usuário** — nunca dentro do próprio projeto `ngdev`.
+O `ngdev` gera scaffolding completo para projetos Laravel. Suporta dois padrões arquiteturais:
+
+- **DDD + Clean Architecture** — Bounded Contexts com Application / Domain / Infra layers
+- **MVCS** — padrão nativo Laravel (`App\Models` · `App\Services` · `App\Http\Controllers`)
+
+Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto informado pelo usuário** — nunca dentro do próprio projeto `ngdev`.
 
 | Modo | Como rodar |
 |---|---|
 | **CLI interativo** | `ngdev` no terminal |
 | **Painel desktop** | `tauri dev` (dev) ou binário `ngdev-manager` (prod) |
 
-**9 geradores disponíveis:**
+**13 geradores disponíveis:**
 
-| # | Gerador | O que entrega |
-|---|---|---|
-| 1 | Context DDD | Bounded context completo (Application + Domain + Infra) + **Docker auto-scaffold** |
-| 2 | Logística Reversa | 7 Contexts + 10 Migrations + 10 Models + Manager JSON + **Docker auto-scaffold** |
-| 3 | ERP Estoque | 6 Contexts + Kardex + UseCases + Manager JSON + **Docker auto-scaffold** |
-| 4 | Infra Docker | Dockerfile dev/prod + compose + Nginx + Makefile |
-| 5 | Landing Page | HTML + Tailwind + DaisyUI (generic) ou Contabilizei-style (SaaS) |
-| 6 | Model | Eloquent + Migration + Controller opcionais |
-| 7 | Controller | Plain ou Resource com Model |
-| 8 | Migration | Schema::create com strict_types |
-| 9 | PDV | Scaffold completo Ponto de Venda + **Docker auto-scaffold** |
+| # | Gerador | Padrão | O que entrega |
+|---|---|---|---|
+| 1 | Context DDD | DDD | Bounded context completo (Application + Domain + Infra) |
+| 2 | Logística Reversa de Sinistros | DDD | 7 Contexts + 10 Migrations + 10 Models + Manager JSON |
+| 3 | ERP Estoque | DDD | 6 Contexts + Kardex + UseCases + Manager JSON |
+| 4 | **ERP Estoque** | **MVCS** | Models + Services + Controllers + Migrations + Routes |
+| 5 | **ERP Logística Reversa** | **MVCS** | Models + Services + Controllers + Migrations + Routes |
+| 6 | Infra Docker | — | Dockerfile dev/prod + compose + Nginx + Makefile |
+| 7 | Landing Page | — | HTML + Tailwind + DaisyUI (generic ou SaaS) |
+| 8 | Model | MVCS | Eloquent Model + Migration + Service + Controller opcionais |
+| 9 | Controller | MVCS | Resource com injeção de Service ou plain |
+| 10 | Service | MVCS | Service com CRUD delegando ao Model |
+| 11 | Migration | — | Schema::create com timestamp Laravel correto |
+| 12 | PDV | — | Scaffold Ponto de Venda |
 
 ---
 
@@ -95,84 +105,86 @@ O `ngdev` gera scaffolding completo para projetos Laravel com DDD e Clean Archit
 ```
 ngdev-laravel/
 ├── src/
-│   ├── main.rs                  ← CLI: menu interativo + ASCII logo
-│   ├── cli.rs                   ← Structs de args compartilhados
+│   ├── main.rs                     ← CLI: menu interativo + ASCII logo
+│   ├── cli.rs                      ← Structs de args compartilhados
 │   └── flows/
-│       ├── context/             ← Gerador Context DDD
-│       ├── docker/              ← Gerador Infra Docker
-│       ├── estoque/             ← Scaffold ERP Estoque
-│       ├── landing_page/        ← Gerador Landing Page (generic + saas)
-│       │   ├── templates.rs     ← Layout DaisyUI generic
-│       │   └── templates_saas.rs← Layout Contabilizei-style
-│       ├── logistica_reversa/   ← Scaffold Logística Reversa
-│       ├── pdv/                 ← Scaffold PDV
+│       ├── deps.rs                 ← copy_laravel_base + verify_all
+│       ├── context/                ← Gerador Context DDD
+│       ├── docker/                 ← Gerador Infra Docker
+│       ├── estoque/                ← Scaffold ERP Estoque (DDD)
+│       ├── erp_estoque/            ← Scaffold ERP Estoque (MVCS)
+│       ├── erp_logistica/          ← Scaffold ERP Logística Reversa (MVCS)
+│       ├── logistica_reversa/      ← Scaffold Logística Reversa (DDD)
+│       ├── landing_page/           ← Gerador Landing Page (generic + saas)
+│       ├── pdv/                    ← Scaffold PDV
 │       └── artesanal/
-│           ├── controller/      ← Gerador Controller
-│           ├── model/           ← Gerador Model
-│           └── migration/       ← Gerador Migration
-├── manager/                     ← Crate Tauri (painel desktop)
+│           ├── controller/         ← Gerador Controller (+ Service opcional)
+│           ├── model/              ← Gerador Model (+ Service + Controller opcionais)
+│           ├── service/            ← Gerador Service
+│           └── migration/          ← Gerador Migration (timestamp Laravel real)
+├── laravel-base/                   ← Template Laravel 13 (sem vendor/)
+│   ├── app/ · bootstrap/ · config/ · database/ · routes/ · resources/
+│   └── composer.json               ← laravel/framework ^13.x
+├── manager/                        ← Crate Tauri (painel desktop)
 │   ├── src/
-│   │   ├── lib.rs               ← Tauri app builder
-│   │   └── commands.rs          ← Bridge frontend → geradores Rust
+│   │   ├── lib.rs                  ← Tauri app builder
+│   │   └── commands.rs             ← Bridge frontend → geradores Rust
 │   └── tauri.conf.json
-├── frontend-installer/          ← SPA Vite + TypeScript + Tailwind + DaisyUI
-│   ├── index.html               ← Layout drawer (sidebar + main)
-│   └── src/main.ts              ← Páginas e handlers dos 9 geradores
-├── Cargo.toml                   ← Workspace (ngdev-laravel + manager)
-└── install.sh                   ← Instala ngdev em /usr/local/bin
+├── frontend-installer/             ← SPA Vite + TypeScript + Tailwind + DaisyUI
+│   ├── index.html                  ← Layout drawer (sidebar + main)
+│   └── src/main.ts                 ← Páginas e handlers dos geradores
+├── Cargo.toml                      ← Workspace (ngdev-laravel + manager)
+├── install.sh                      ← Instala ngdev em /usr/local/bin
+└── install.ps1                     ← Instala ngdev em %USERPROFILE%\.cargo\bin
 ```
 
 ---
 
-## Fluxo 1 — Menu Principal
+## Menu Principal
 
 ```mermaid
 flowchart TD
     START([▶ ngdev]) --> LOGO[Exibe ASCII Logo\nNg Development · Laravel]
     LOGO --> MENU{Selecione o gerador}
 
-    MENU --> G1[🏗 Context DDD]
-    MENU --> G2[🚚 Logística Reversa]
-    MENU --> G3[📦 ERP Estoque]
-    MENU --> G4[🐳 Infra Docker]
-    MENU --> G5[🌐 Landing Page]
-    MENU --> G6[🗃 Model]
-    MENU --> G7[🎮 Controller]
-    MENU --> G8[📋 Migration]
-    MENU --> G9[🧾 PDV]
+    MENU --> G1[Context DDD]
+    MENU --> G2[Logística Reversa — DDD]
+    MENU --> G3[ERP Estoque — DDD]
+    MENU --> G4[ERP Estoque — MVCS]
+    MENU --> G5[ERP Logística Reversa — MVCS]
+    MENU --> G6[Infra Docker]
+    MENU --> G7[Landing Page]
+    MENU --> G8[Model]
+    MENU --> G9[Controller]
+    MENU --> G10[Service]
+    MENU --> G11[Migration]
+    MENU --> G12[PDV]
     MENU --> EXIT([Sair])
 
-    G1 --> FLOW_CTX([→ ver Fluxo 2])
-    G2 & G3 & G9 --> FLOW_SC([→ ver Fluxo 3])
-    G4 --> FLOW_DOC([→ ver Fluxo 4])
-    G5 --> FLOW_LP([→ ver Fluxo 5])
-    G6 & G7 & G8 --> FLOW_ART([→ ver Fluxo 6])
+    G1 --> CTX([→ DDD Context])
+    G2 & G3 --> DDD([→ Scaffolds DDD])
+    G4 & G5 --> MVCS([→ Scaffolds MVCS])
+    G6 --> DOC([→ Docker])
+    G7 --> LP([→ Landing Page])
+    G8 & G9 & G10 & G11 --> ART([→ Geradores Avulsos])
 ```
 
 ---
 
-## Fluxo 2 — Context DDD
+## Fluxo — Context DDD
 
 ```mermaid
 flowchart TD
-    IN([Gerador Context DDD]) --> W1[Nome do Context\nex: Produto → PascalCase automático]
-    W1 --> W2[Prefixo de rota\nkebab-case auto-sugerido]
-    W2 --> W3[Namespace base PHP\nex: App\\\\Contexts]
-    W3 --> W4[Diretório base dos Contexts\nex: back/app/Contexts]
+    IN([Gerador Context DDD]) --> W0[Caminho absoluto do projeto Laravel]
+    W0 --> W1[Nome do Context\nex: Produto → PascalCase automático]
+    W1 --> W2[Prefixo de rota — kebab-case auto-sugerido]
+    W2 --> W3[Diretório base dos Contexts\npadrão: app/Contexts]
+    W3 --> W4[Namespace base PHP\nex: App\\\\Contexts]
     W4 --> W5{Gerar Domain Entity?}
     W5 --> W6{Gerar Autorizações?}
-    W6 --> W7[MultiSelect: operações\nconsultar · detalhar · criar · alterar · deletar]
-    W7 --> W8[Caminho absoluto do projeto Laravel\nex: /home/user/meu-projeto]
+    W6 --> W7[MultiSelect operações\nconsultar · detalhar · criar · alterar · deletar\ntodos marcados por padrão]
 
-    W8 --> DEPS
-
-    subgraph DEPS [🔍 Verificação de Dependências — deps::verify_all]
-        D1[PHP 8.3 LTS\n+ todas as extensões Laravel\nauto-instala se ausente]
-        D2[Composer\nauto-instala se ausente]
-        D3[PostgreSQL 16\nauto-instala se ausente]
-    end
-
-    DEPS --> APP & DOM & INF
+    W7 --> APP & DOM & INF
 
     subgraph APP [Application Layer]
         A1[DTOs Input — readonly class]
@@ -195,59 +207,68 @@ flowchart TD
         I4[Routes · ServiceProvider]
     end
 
-    subgraph DOCKER [🐳 Docker auto-scaffold]
-        DK1[Dockerfile.dev + Dockerfile.prod]
-        DK2[docker-compose.dev.yml + docker-compose.prod.yml]
-        DK3[nginx · php-fpm · xdebug · supervisor]
-        DK4[.dockerignore · .env.docker · Makefile]
-    end
-
-    APP & DOM & INF --> DOCKER
-    DOCKER --> OK([✅ Context + Docker gerados\nem /projeto/base_path/NomeContext/])
+    APP & DOM & INF --> OK([✅ Context gerado\nRegistre o provider em bootstrap/providers.php])
 ```
 
 ---
 
-## Fluxo 3 — Scaffolds Completos (Logística · Estoque · PDV)
+## Fluxo — Scaffolds DDD Completos
 
 ```mermaid
 flowchart TD
-    subgraph LOG [🚚 Logística Reversa de Sinistros]
+    subgraph LOG [Logística Reversa de Sinistros — DDD]
         L1[paths · namespace · ERP ID\ncompany · warehouse] --> L2[Caminho absoluto do projeto]
-        L2 --> LDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
-        LDEPS --> LA[7 Contexts DDD\nSeguradora · Transportadora · Segurado\nApólice · Sinistro · OrdemColeta · LaudoTriagem]
-        LDEPS --> LB[10 Migrations ordenadas por FK\ndeclare strict + índices + comentários]
-        LDEPS --> LC[10 Eloquent Models\n+ ItemSinistrado · MovimentacaoLogistica · RecebimentoCd]
-        LDEPS --> LD[Manager JSON\nSLA · Webhooks exponential_backoff · Intelipost Reverse]
-        LA & LB & LC & LD --> LDK[🐳 Docker auto-scaffold\nDockerfile.dev/prod · docker-compose · Nginx · Makefile]
-        LDK --> LOK([✅ Logística + Docker gerados])
+        L2 --> LB[laravel-base copiado → project_root]
+        LB --> LA[7 Contexts DDD\nSeguradora · Transportadora · Segurado\nApólice · Sinistro · OrdemColeta · LaudoTriagem]
+        LB --> LC[10 Migrations ordenadas por FK]
+        LB --> LD[10 Eloquent Models cross-context]
+        LB --> LE[Manager JSON — SLA · Webhooks · Intelipost]
+        LA & LC & LD & LE --> LOK([✅ Logística DDD gerada])
     end
 
-    subgraph EST [📦 ERP Estoque]
-        E1[paths · namespace\nmétodo custeio PEPS / Custo Médio] --> E2[Caminho absoluto do projeto]
-        E2 --> EDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
-        EDEPS --> EA[6 Contexts DDD\nArmazem · Fornecedor · Produto\nPedidoCompra · MovimentacaoEstoque · Inventario]
-        EDEPS --> EB[10 Migrations decimal 12-3\nmulti-armazém · lote · inventário]
-        EDEPS --> EC[10 Models + 4 sub-entidades\nPosicaoEstoque · Lote\nItemPedidoCompra · ContagemInventario]
-        EDEPS --> ED[UseCases com regra de negócio\nRegistrarMovimentacao — Kardex imutável\nFecharInventario — ajuste_ganho / ajuste_perda]
-        EDEPS --> EE[Manager JSON\nPEPS · Custo Médio · alerta vencimento · ressuprimento]
-        EA & EB & EC & ED & EE --> EDK[🐳 Docker auto-scaffold\nDockerfile.dev/prod · docker-compose · Nginx · Makefile]
-        EDK --> EOK([✅ ERP Estoque + Docker gerados])
-    end
-
-    subgraph PDV [🧾 Scaffold PDV]
-        P1[Modo: Tudo / Só Migrations / Só Models] --> P2[Caminho absoluto do projeto]
-        P2 --> PDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
-        PDEPS --> PA[Migrations Ponto de Venda]
-        PDEPS --> PB[Eloquent Models PDV]
-        PA & PB --> PDK[🐳 Docker auto-scaffold]
-        PDK --> POK([✅ PDV + Docker gerados])
+    subgraph EST [ERP Estoque — DDD]
+        E1[paths · namespace · método custeio] --> E2[Caminho absoluto do projeto]
+        E2 --> EB[laravel-base copiado → project_root]
+        EB --> EA[6 Contexts DDD\nArmazem · Fornecedor · Produto\nPedidoCompra · MovimentacaoEstoque · Inventario]
+        EB --> EC[10 Migrations + 4 sub-entidades]
+        EB --> ED[UseCases Kardex imutável + FecharInventario]
+        EB --> EE[Manager JSON — PEPS · Custo Médio]
+        EA & EC & ED & EE --> EOK([✅ ERP Estoque DDD gerado])
     end
 ```
 
 ---
 
-## Fluxo 4 — Infra Docker
+## Fluxo — Scaffolds MVCS (padrão Laravel)
+
+```mermaid
+flowchart TD
+    subgraph MVES [ERP Estoque — MVCS]
+        ME1[Caminho absoluto do projeto] --> ME2[laravel-base copiado]
+        ME2 --> ME3[10 Migrations]
+        ME2 --> ME4[10 Models — App\\Models\nArmazem · Fornecedor · Produto · Lote\nPedidoCompra · ItemPedidoCompra\nMovimentacaoEstoque · Inventario · ContagemInventario · PosicaoEstoque]
+        ME2 --> ME5[6 Services — App\\Services\nArmazem · Fornecedor · Produto · PedidoCompra\nMovimentacaoEstoque com Kardex · Inventario]
+        ME2 --> ME6[6 Controllers — App\\Http\\Controllers\\Estoque\nvalidação inline · JsonResponse]
+        ME2 --> ME7[routes/api_erp_estoque.php\napiResource + rotas Kardex sem PUT/DELETE]
+        ME3 & ME4 & ME5 & ME6 & ME7 --> MEOK([✅ ERP Estoque MVCS])
+    end
+
+    subgraph MVLOG [ERP Logística Reversa — MVCS]
+        ML1[Caminho absoluto do projeto] --> ML2[laravel-base copiado]
+        ML2 --> ML3[10 Migrations]
+        ML2 --> ML4[10 Models — App\\Models\nSeguradora · Transportadora · Segurado · Apolice\nSinistro · ItemSinistrado · OrdemColeta\nMovimentacaoLogistica · RecebimentoCd · LaudoTriagem]
+        ML2 --> ML5[7 Services — App\\Services\nOrdemColetaService com registrarMovimentacao]
+        ML2 --> ML6[7 Controllers — App\\Http\\Controllers\\Logistica\nvalidação inline + rota de tracking]
+        ML2 --> ML7[routes/api_erp_logistica.php\napiResource + POST ordens-coleta/{id}/movimentacoes]
+        ML3 & ML4 & ML5 & ML6 & ML7 --> MLOK([✅ ERP Logística MVCS])
+    end
+
+    MEOK & MLOK --> NEXT[Próximos passos:\ncomposer install\nphp artisan migrate]
+```
+
+---
+
+## Fluxo — Infra Docker
 
 ```mermaid
 flowchart TD
@@ -271,7 +292,7 @@ flowchart TD
 
 ---
 
-## Fluxo 5 — Landing Page
+## Fluxo — Landing Page
 
 ```mermaid
 flowchart TD
@@ -299,32 +320,41 @@ flowchart TD
 
 ---
 
-## Fluxo 6 — Geradores Avulsos
+## Fluxo — Geradores Avulsos (MVCS)
 
 ```mermaid
 flowchart TD
-    subgraph MOD [🗃 Model]
-        M1[Nome — ex: Produto] --> M2{+ Migration?}
-        M2 --> M3{+ Controller?}
-        M3 --> M4[Caminho absoluto do projeto]
-        M4 --> MA[app/Models/Produto.php\nfillable · hidden · table]
-        M4 --> MB[database/migrations/..._create_produtos_table.php]
-        M4 --> MC[app/Http/Controllers/ProdutoController.php]
-        MA & MB & MC --> MOK([✅ Model gerado])
+    subgraph MOD [Model]
+        M0[Caminho do projeto] --> M1[Nome — ex: Produto]
+        M1 --> M2{+ Migration?}
+        M2 --> M3{+ Service — MVCS?}
+        M3 --> M4{+ Controller?}
+        M4 --> MA[app/Models/Produto.php]
+        M4 --> MB[database/migrations/YYYY_MM_DD_HHMMSS_create_produtos_table.php]
+        M4 --> MS[app/Services/ProdutoService.php\nindex · show · store · update · destroy]
+        M4 --> MC[app/Http/Controllers/ProdutoController.php\ninjeta ProdutoService no construtor]
+        MA & MB & MS & MC --> MOK([✅ Model gerado])
     end
 
-    subgraph CTRL [🎮 Controller]
-        C1[Nome — ex: ProdutoController] --> C2{Resource Controller?}
-        C2 --> C3[Model opcional — type-hint automático]
-        C3 --> C4[Caminho absoluto do projeto]
-        C4 --> CA[app/Http/Controllers/ProdutoController.php\nindex · create · store · show · edit · update · destroy]
-        CA --> COK([✅ Controller gerado])
+    subgraph CTRL [Controller]
+        C0[Caminho do projeto] --> C1[Nome — ex: ProdutoController]
+        C1 --> C2{Gerar Service junto — MVCS?}
+        C2 -- sim --> CS[app/Services/ProdutoService.php\n+ Controller com injeção]
+        C2 -- não --> CA[Controller resource padrão Laravel]
+        CS & CA --> COK([✅ Controller gerado])
     end
 
-    subgraph MIG [📋 Migration]
-        G1[Nome — ex: create_produtos_table] --> G2[Table opcional\nauto-inferida do nome]
-        G2 --> G3[Caminho absoluto do projeto]
-        G3 --> GA[database/migrations/YYYY_MM_DD_HHMMSS_nome.php\ndeclare strict + Schema::create + timestamps]
+    subgraph SVC [Service]
+        S0[Caminho do projeto] --> S1[Nome — ex: Produto]
+        S1 --> S2[Model a injetar\nauto: mesmo nome]
+        S2 --> SA[app/Services/ProdutoService.php]
+        SA --> SOK([✅ Service gerado])
+    end
+
+    subgraph MIG [Migration]
+        G0[Caminho do projeto] --> G1[Nome — ex: create_produtos_table]
+        G1 --> G2[Table — auto-inferida do nome]
+        G2 --> GA[database/migrations/YYYY_MM_DD_HHMMSS_nome.php\ntimestamp Laravel real · declare strict]
         GA --> GOK([✅ Migration gerada])
     end
 ```
@@ -333,7 +363,7 @@ flowchart TD
 
 ## Geradores em Detalhe
 
-### 🏗️ Context DDD
+### Context DDD
 
 | Camada | O que gera |
 |---|---|
@@ -343,7 +373,7 @@ flowchart TD
 
 ---
 
-### 🚚 Logística Reversa de Sinistros
+### Logística Reversa de Sinistros (DDD)
 
 - **7 Contexts DDD** — Seguradora, Transportadora, Segurado, Apólice, Sinistro, OrdemColeta, LaudoTriagem
 - **3 sub-entidades** — ItemSinistrado, MovimentacaoLogistica, RecebimentoCd
@@ -353,7 +383,7 @@ flowchart TD
 
 ---
 
-### 📦 ERP de Estoque
+### ERP de Estoque (DDD)
 
 - **6 Contexts DDD** — Armazem, Fornecedor, Produto, PedidoCompra, MovimentacaoEstoque *(Kardex imutável — sem PUT/DELETE)*, Inventario
 - **4 sub-entidades** — PosicaoEstoque, Lote, ItemPedidoCompra, ContagemInventario
@@ -365,7 +395,33 @@ flowchart TD
 
 ---
 
-### 🐳 Infra Docker (DEV + PROD)
+### ERP de Estoque (MVCS)
+
+Namespace plano `App\Models` / `App\Services` / `App\Http\Controllers\Estoque`:
+
+| Camada | Arquivos |
+|---|---|
+| Models | Armazem, Fornecedor, Produto, Lote, PedidoCompra, ItemPedidoCompra, MovimentacaoEstoque, Inventario, ContagemInventario, PosicaoEstoque |
+| Services | ArmazemService, FornecedorService, ProdutoService, PedidoCompraService, **MovimentacaoEstoqueService** (Kardex com `registrar()` + cálculo de saldo), InventarioService |
+| Controllers | 6 controllers com validação inline — Kardex sem PUT/DELETE |
+| Routes | `routes/api_erp_estoque.php` — `apiResource` + rotas Kardex manuais |
+
+---
+
+### ERP Logística Reversa (MVCS)
+
+Namespace plano `App\Models` / `App\Services` / `App\Http\Controllers\Logistica`:
+
+| Camada | Arquivos |
+|---|---|
+| Models | Seguradora, Transportadora, Segurado, Apolice, Sinistro, ItemSinistrado, OrdemColeta, MovimentacaoLogistica, RecebimentoCd, LaudoTriagem |
+| Services | 7 services — **OrdemColetaService** com `registrarMovimentacao()` para tracking em tempo real |
+| Controllers | 7 controllers com validação inline + rota extra `POST /ordens-coleta/{id}/movimentacoes` |
+| Routes | `routes/api_erp_logistica.php` |
+
+---
+
+### Infra Docker (DEV + PROD)
 
 | Arquivo | Descrição |
 |---|---|
@@ -389,7 +445,7 @@ flowchart TD
 
 ---
 
-### 🌐 Landing Page
+### Landing Page
 
 Dois layouts disponíveis — cada seção em **diretório próprio**:
 
@@ -471,43 +527,45 @@ RUSTFLAGS="-C target-feature=+crt-static" \
 
 ---
 
-## Novidades — v0.2.0
+## Changelog
 
-### `flows/deps` — Verificação e auto-instalação de dependências
+### v0.4.0 — ERP MVCS + Geradores Avulsos MVCS
 
-Todos os flows DDD (Context, Estoque, Logística Reversa, PDV) agora executam `deps::verify_all()` antes de gerar qualquer arquivo.
-
-| Dependência | Comportamento |
-|---|---|
-| **PHP 8.3 LTS** | Verifica ≥ 8.2. Se ausente, instala com todas as extensões Laravel (mbstring, pgsql, redis, gd, intl, opcache…) |
-| **Composer** | Verifica no PATH. Se ausente, instala via `winget` (Windows) ou installer oficial (Linux/macOS) |
-| **PostgreSQL 16** | Verifica `psql`/`pg_isready`. Se ausente, instala via repositório PGDG / brew / winget |
-
-**Estratégia de instalação por OS:**
-
-| OS | PHP | Composer | PostgreSQL |
-|---|---|---|---|
-| Ubuntu/Debian | `apt` + repo `ondrej/php` | installer oficial | `apt` + repo PGDG |
-| Fedora/RHEL | `dnf` + repo `pgdg-redhat` | installer oficial | `dnf` + initdb |
-| macOS | `brew install php` + `pecl` | installer oficial | `brew install postgresql@16` |
-| Windows | `winget install PHP.PHP` | `winget install Composer.Composer` | `winget install PostgreSQL.PostgreSQL` |
+- **Novos flows:** ERP Estoque (MVCS) e ERP Logística Reversa (MVCS)
+  - Geram `App\Models` / `App\Services` / `App\Http\Controllers` no padrão nativo Laravel
+  - Reutilizam as migrations dos flows DDD (mesmo schema)
+  - Kardex na versão MVCS: `MovimentacaoEstoqueService::registrar()` com cálculo de saldo em transação
+  - Tracking na versão MVCS: `OrdemColetaService::registrarMovimentacao()` + rota extra
+  - Routes separadas em `routes/api_erp_estoque.php` e `routes/api_erp_logistica.php`
+- **Novo gerador:** `Criar Service` — gera `App\Services\{Nome}Service` standalone
+- **Criar Controller** — nova opção "Gerar Service junto (MVCS)?" (default: sim)
+  - Com service: controller injeta `{Nome}Service`, delega todas as ações, retorna `JsonResponse`
+- **Criar Model** — nova opção "Gerar Service?" (default: sim); passa `service=true` ao controller
+- **Migration** — timestamp corrigido para formato Laravel real `YYYY_MM_DD_HHMMSS` (antes usava Unix epoch)
+- **Context DDD** — removida verificação de deps e Docker auto-scaffold; pergunta projeto primeiro
 
 ---
 
-### Docker auto-scaffold embutido nos flows DDD
+### v0.3.0 — laravel-base + copy_laravel_base
 
-Quatro flows agora geram automaticamente a infra Docker completa **no project root** ao final da execução — sem perguntas adicionais, com defaults coerentes:
+- **`laravel-base/`** adicionado ao repositório: template Laravel 13 sem `vendor/` (`composer.json` com `laravel/framework ^13.x`)
+- **`deps::copy_laravel_base(dest)`** — copia o template para o projeto destino antes da geração; idempotente (pula se `composer.json` já existe)
+- Flows ERP Estoque (DDD), Logística Reversa (DDD) e PDV substituem `verify_all()` por `copy_laravel_base()`
+- Usuário roda `composer install` manualmente após a geração
 
-| Flow | Docker gerado | app_name |
-|---|---|---|
-| Context DDD | ✔ | nome do context em lowercase |
-| ERP Estoque | ✔ `[6/6]` | `estoque` |
-| Logística Reversa | ✔ `[5/5]` | `logistica-reversa` |
-| PDV | ✔ | `pdv` |
+---
 
-**Stack Docker padrão:** PHP 8.3 · PostgreSQL · Redis · Mailpit (dev) · Nginx · Supervisor
+### v0.2.0 — deps + Docker auto-scaffold
 
-Arquivos gerados: `Dockerfile.dev`, `Dockerfile.prod`, `docker-compose.dev.yml`, `docker-compose.prod.yml`, `docker/nginx/`, `docker/php/`, `docker/supervisor/`, `.dockerignore`, `.env.docker`, `Makefile`
+- **`flows/deps`** — verificação e auto-instalação de PHP 8.3, Composer e PostgreSQL
+- **Docker auto-scaffold** embutido nos flows Context, Estoque, Logística e PDV
+- Correção do `install_composer_via_php_windows()`: retorna `bool`, injeta diretório PHP no PATH, wrapper `.bat` sempre (re)escrito
+
+---
+
+### v0.1.0 — Versão inicial
+
+- Context DDD, Logística Reversa, ERP Estoque, Infra Docker, Landing Page, Model, Controller, Migration, PDV
 
 ---
 
