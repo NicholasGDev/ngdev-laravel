@@ -3,6 +3,7 @@ pub mod templates;
 
 use anyhow::Result;
 use console::style;
+use crate::flows::deps;
 use dialoguer::{theme::ColorfulTheme, Input};
 
 pub fn run(theme: &ColorfulTheme) -> Result<()> {
@@ -56,7 +57,10 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!("  {}", style("Gerando estrutura completa...").yellow().bold());
     println!();
 
+    deps::verify_all()?;
+
     generator::generate(&generator::LogisticaReversaOptions {
+        project_root: root.to_string(),
         base_path,
         namespace_base,
         migration_path,

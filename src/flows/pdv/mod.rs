@@ -3,6 +3,7 @@ pub mod templates;
 
 use anyhow::Result;
 use console::style;
+use crate::flows::deps;
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
 pub fn run(theme: &ColorfulTheme) -> Result<()> {
@@ -24,6 +25,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     let project_root: String = Input::with_theme(theme)
         .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
         .interact_text()?;
+
+    deps::verify_all()?;
 
     generator::generate(&crate::cli::PdvArgs {
         migrations_only: selecao == 1,

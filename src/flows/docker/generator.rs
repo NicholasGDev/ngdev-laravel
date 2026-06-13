@@ -154,11 +154,57 @@ pub fn generate(opts: &DockerOptions) -> Result<()> {
     Ok(())
 }
 
+/// Gera o scaffold Docker completo para um projeto Laravel com PostgreSQL + Redis.
+/// Chamado pelos outros flows DDD para embutir a infra Docker no projeto gerado.
+/// Usa defaults sensatos: PHP 8.3, Node 20, pgsql, redis, mailpit.
+pub fn scaffold(project_root: &str, app_name: &str) -> Result<()> {
+    let base = PathBuf::from(project_root);
+    let databases = vec!["pgsql".to_string()];
+
+    println!();
+    println!("  {}", style("[ docker ] Gerando infra Docker (PHP 8.3 + PostgreSQL + Redis)...").cyan().bold());
+    println!();
+
+    wq(&base.join("Dockerfile.dev"),
+        &tmpl::dockerfile_dev("8.3", 20, &databases))?;
+    wq(&base.join("Dockerfile.prod"),
+        &tmpl::dockerfile_prod("8.3", &databases))?;
+    wq(&base.join("docker-compose.dev.yml"),
+        &tmpl::compose_dev(app_name, &databases, true, true))?;
+    wq(&base.join("docker-compose.prod.yml"),
+        &tmpl::compose_prod(app_name, &databases, true))?;
+    wq(&base.join("docker/nginx/nginx.conf"),    tmpl::nginx_conf())?;
+    wq(&base.join("docker/nginx/default.conf"),  &tmpl::nginx_default_conf("localhost"))?;
+    wq(&base.join("docker/php/php-dev.ini"),     tmpl::php_ini_dev())?;
+    wq(&base.join("docker/php/php-prod.ini"),    tmpl::php_ini_prod())?;
+    wq(&base.join("docker/php/xdebug.ini"),      tmpl::xdebug_ini())?;
+    wq(&base.join("docker/php/www.conf"),        tmpl::php_fpm_www_conf())?;
+    wq(&base.join("docker/supervisor/supervisord.prod.conf"), tmpl::supervisord_prod())?;
+    wq(&base.join(".dockerignore"),              tmpl::dockerignore())?;
+    wq(&base.join(".env.docker"),                &tmpl::env_example(app_name, &databases, true))?;
+    wq(&base.join("Makefile"),                   &tmpl::makefile(app_name))?;
+
+    println!();
+    println!("  {} Docker scaffold gerado — use {} para subir.", style("✔").green().bold(), style("make up").white().bold());
+
+    Ok(())
+}
+
 fn write(path: &Path, content: &str) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
     fs::write(path, content)?;
+    Ok(())
+}
+
+/// write + print (quiet variant para scaffold)
+fn wq(path: &Path, content: &str) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, content)?;
+    println!("  {} {}", style("docker").cyan(), style(path.display()).dim());
     Ok(())
 }
 

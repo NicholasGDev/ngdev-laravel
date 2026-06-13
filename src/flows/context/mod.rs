@@ -3,6 +3,7 @@ pub mod templates;
 
 use anyhow::Result;
 use console::style;
+use crate::flows::{deps, docker};
 use dialoguer::{theme::ColorfulTheme, Confirm, Input, MultiSelect};
 use heck::{ToKebabCase, ToPascalCase};
 
@@ -75,6 +76,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     );
     println!();
 
+    deps::verify_all()?;
+
     generator::generate(&generator::ContextOptions {
         nome: nome.clone(),
         base_path,
@@ -84,6 +87,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         com_autorizacoes,
         operacoes,
     })?;
+
+    docker::generator::scaffold(root, &nome.to_lowercase())?;
 
     println!();
     println!(

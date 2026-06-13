@@ -1,5 +1,5 @@
 use crate::cli::PdvArgs;
-use crate::flows::deps;
+use crate::flows::docker;
 use super::templates;
 use anyhow::Result;
 use std::fs;
@@ -7,9 +7,6 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn generate(args: &PdvArgs) -> Result<()> {
-    // ── Verificação de dependências ───────────────────────────────────────────
-    deps::verify_all()?;
-
     let root = PathBuf::from(&args.project_root);
     fs::create_dir_all(&root)?;
 
@@ -25,6 +22,9 @@ pub fn generate(args: &PdvArgs) -> Result<()> {
     if !args.migrations_only {
         generate_models(&root)?;
     }
+
+    // ── Infra Docker ──────────────────────────────────────────────────────────
+    docker::generator::scaffold(&args.project_root, "pdv")?;
 
     Ok(())
 }

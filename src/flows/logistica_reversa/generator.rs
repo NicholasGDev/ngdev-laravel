@@ -1,5 +1,5 @@
 use crate::flows::context::generator::{generate as gen_context, ContextOptions};
-use crate::flows::deps;
+use crate::flows::docker;
 use super::templates as tmpl;
 use anyhow::Result;
 use console::style;
@@ -7,6 +7,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 pub struct LogisticaReversaOptions {
+    pub project_root: String,
     pub base_path: String,
     pub namespace_base: String,
     pub migration_path: String,
@@ -20,11 +21,8 @@ pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
     let ns = &opts.namespace_base;
     let base = &opts.base_path;
 
-    // ── Verificação de dependências ──────────────────────────────────────────
-    deps::verify_all()?;
-
     println!();
-    println!("  {}", style("[ 1/4 ] Gerando DDD Contexts...").cyan().bold());
+    println!("  {}", style("[ 1/5 ] Gerando DDD Contexts...").cyan().bold());
     println!();
 
     // ── 7 Bounded Contexts ───────────────────────────────────────────────────
@@ -83,7 +81,7 @@ pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
 
     // ── Sobrescreve os Eloquent Models com implementações reais ──────────────
 
-    println!("  {}", style("[ 2/4 ] Sobrescrevendo Eloquent Models com campos reais...").cyan().bold());
+    println!("  {}", style("[ 2/5 ] Sobrescrevendo Eloquent Models com campos reais...").cyan().bold());
     println!();
 
     let models: Vec<(&str, String, &str)> = vec![
@@ -168,7 +166,7 @@ pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
 
     // ── Migrations ───────────────────────────────────────────────────────────
 
-    println!("  {}", style("[ 3/4 ] Gerando Migrations...").cyan().bold());
+    println!("  {}", style("[ 3/5 ] Gerando Migrations...").cyan().bold());
     println!();
 
     let migration_base = PathBuf::from(&opts.migration_path);
@@ -196,7 +194,7 @@ pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
 
     // ── Manager JSON ─────────────────────────────────────────────────────────
 
-    println!("  {}", style("[ 4/4 ] Gerando Manager JSON...").cyan().bold());
+    println!("  {}", style("[ 4/5 ] Gerando Manager JSON...").cyan().bold());
     println!();
 
     let manager_content = tmpl::manager_json(&opts.erp_id, &opts.company_name, &opts.warehouse_id);
@@ -206,15 +204,11 @@ pub fn generate(opts: &LogisticaReversaOptions) -> Result<()> {
     write_file(&manager_path, &manager_content)?;
     println!("  {} {}", style("criado").green(), style(manager_path.display()).dim());
 
-    // ── Resumo ───────────────────────────────────────────────────────────────
+    // ── [ 5/5 ] Infra Docker ───────────────────────────────────────────────
 
-    println!();
-    println!("  {}", style("══════════════════════════════════════════════════════").dim());
-    println!(
-        "  {}",
-        style("  Logistica Reversa gerada com sucesso!").green().bold()
-    );
-    println!("  {}", style("══════════════════════════════════════════════════════").dim());
+    docker::generator::scaffold(&opts.project_root, "logistica-reversa")?;
+
+    // ── Resumo
     println!();
     println!("  {} Contexts DDD criados:", style("7").yellow().bold());
     println!("    Seguradora · Transportadora · Segurado · Apolice");

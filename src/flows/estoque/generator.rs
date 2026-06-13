@@ -1,5 +1,5 @@
 use crate::flows::context::generator::{generate as gen_context, ContextOptions};
-use crate::flows::deps;
+use crate::flows::docker;
 use super::templates as tmpl;
 use anyhow::Result;
 use console::style;
@@ -7,6 +7,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 pub struct EstoqueOptions {
+    pub project_root: String,
     pub base_path: String,
     pub namespace_base: String,
     pub migration_path: String,
@@ -18,11 +19,8 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
     let ns = &opts.namespace_base;
     let base = &opts.base_path;
 
-    // ── Verificação de dependências ──────────────────────────────────────────
-    deps::verify_all()?;
-
     println!();
-    println!("  {}", style("[ 1/5 ] Gerando DDD Contexts...").cyan().bold());
+    println!("  {}", style("[ 1/6 ] Gerando DDD Contexts...").cyan().bold());
     println!();
 
     // ── 6 Bounded Contexts ───────────────────────────────────────────────────
@@ -77,7 +75,7 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
 
     // ── Sobrescreve Eloquent Models com campos reais ─────────────────────────
 
-    println!("  {}", style("[ 2/5 ] Sobrescrevendo Eloquent Models com campos reais...").cyan().bold());
+    println!("  {}", style("[ 2/6 ] Sobrescrevendo Eloquent Models com campos reais...").cyan().bold());
     println!();
 
     let models: Vec<(&str, String, &str)> = vec![
@@ -162,7 +160,7 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
 
     // ── UseCases e Errors especiais ──────────────────────────────────────────
 
-    println!("  {}", style("[ 3/5 ] Gerando UseCases e Errors especiais (Kardex + Inventario)...").cyan().bold());
+    println!("  {}", style("[ 3/6 ] Gerando UseCases e Errors especiais (Kardex + Inventario)...").cyan().bold());
     println!();
 
     // MovimentacaoEstoque — UseCase Kardex
@@ -209,7 +207,7 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
 
     // ── Migrations ───────────────────────────────────────────────────────────
 
-    println!("  {}", style("[ 4/5 ] Gerando Migrations (ordem de FK)...").cyan().bold());
+    println!("  {}", style("[ 4/6 ] Gerando Migrations (ordem de FK)...").cyan().bold());
     println!();
 
     let migration_base = PathBuf::from(&opts.migration_path);
@@ -237,7 +235,7 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
 
     // ── Manager JSON ─────────────────────────────────────────────────────────
 
-    println!("  {}", style("[ 5/5 ] Gerando Manager JSON...").cyan().bold());
+    println!("  {}", style("[ 5/6 ] Gerando Manager JSON...").cyan().bold());
     println!();
 
     let manager_content = tmpl::manager_json(&opts.tenant_id, &opts.valuation_method);
@@ -248,12 +246,11 @@ pub fn generate(opts: &EstoqueOptions) -> Result<()> {
     write_file(&manager_path, &manager_content)?;
     println!("  {} {}", style("criado").green(), style(manager_path.display()).dim());
 
-    // ── Resumo ───────────────────────────────────────────────────────────────
+    // ── [ 6/6 ] Infra Docker ───────────────────────────────────────────────
 
-    println!();
-    println!("  {}", style("══════════════════════════════════════════════════════").dim());
-    println!("  {}", style("  ERP Estoque (DDD) gerado com sucesso!").green().bold());
-    println!("  {}", style("══════════════════════════════════════════════════════").dim());
+    docker::generator::scaffold(&opts.project_root, "estoque")?;
+
+    // ── Resumo
     println!();
     println!("  {} Contexts DDD:", style("6").yellow().bold());
     println!("    Armazem · Fornecedor · Produto · PedidoCompra");
