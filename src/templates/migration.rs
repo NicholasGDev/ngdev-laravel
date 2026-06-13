@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-pub fn render(name: &str, table: &str) -> Result<String> {
+pub fn render(_name: &str, table: &str) -> Result<String> {
     Ok(format!(
         r#"<?php
 
