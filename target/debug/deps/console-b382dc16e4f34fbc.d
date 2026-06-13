@@ -1,0 +1,13 @@
+/root/projects/ngdev-laravel/target/debug/deps/console-b382dc16e4f34fbc.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/common_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/kb.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/unix_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/utils.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/ansi.rs
+
+/root/projects/ngdev-laravel/target/debug/deps/libconsole-b382dc16e4f34fbc.rlib: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/common_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/kb.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/unix_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/utils.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/ansi.rs
+
+/root/projects/ngdev-laravel/target/debug/deps/libconsole-b382dc16e4f34fbc.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/common_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/kb.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/unix_term.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/utils.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/ansi.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/common_term.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/kb.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/term.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/unix_term.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/utils.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/console-0.15.11/src/ansi.rs:
