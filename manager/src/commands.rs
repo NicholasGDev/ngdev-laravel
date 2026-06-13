@@ -211,6 +211,7 @@ pub fn generate_controller(input: ControllerInput) -> Result<String, String> {
         name: input.name.clone(),
         resource: input.resource,
         model: input.model,
+        service: false,
         project_root: input.project_root,
     };
     gen_controller(&args)
@@ -225,6 +226,7 @@ pub fn generate_model(input: ModelInput) -> Result<String, String> {
         name: input.name.clone(),
         migration: input.migration,
         controller: input.controller,
+        service: false,
         project_root: input.project_root,
     };
     gen_model(&args)

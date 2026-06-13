@@ -79,6 +79,7 @@ fn main() -> Result<()> {
             "Gerar Landing Page (HTML + Tailwind + DaisyUI)",
             "Criar Model",
             "Criar Controller",
+            "Criar Service",
             "Criar Migration",
             "Scaffold PDV Completo",
             "Sair",
@@ -100,9 +101,10 @@ fn main() -> Result<()> {
             4 => flows::landing_page::run(&theme)?,
             5 => flows::artesanal::model::run(&theme)?,
             6 => flows::artesanal::controller::run(&theme)?,
-            7 => flows::artesanal::migration::run(&theme)?,
-            8 => flows::pdv::run(&theme)?,
-            9 => {
+            7 => flows::artesanal::service::run(&theme)?,
+            8 => flows::artesanal::migration::run(&theme)?,
+            9 => flows::pdv::run(&theme)?,
+            10 => {
                 println!("{}", style("  Ate logo!").cyan().bold());
                 break;
             }

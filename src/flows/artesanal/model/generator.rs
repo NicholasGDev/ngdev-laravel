@@ -6,16 +6,16 @@ use std::fs;
 use std::path::PathBuf;
 
 pub fn generate(args: &ModelArgs) -> Result<()> {
-    let name = args.name.to_pascal_case();
+    let name  = args.name.to_pascal_case();
     let table = name.to_snake_case() + "s";
-    let root = PathBuf::from(&args.project_root);
+    let root  = PathBuf::from(&args.project_root);
 
     let content = templates::render(&name, &table)?;
     let dir = root.join("app/Models");
     fs::create_dir_all(&dir)?;
     let path = dir.join(format!("{}.php", name));
     fs::write(&path, &content)?;
-    println!("Created: {}", path.display());
+    println!("  Created: {}", path.display());
 
     if args.migration {
         let migration_name = format!("create_{}_table", table);
@@ -26,11 +26,20 @@ pub fn generate(args: &ModelArgs) -> Result<()> {
         })?;
     }
 
+    // Se tem controller, o controller cuida de gerar o service também.
     if args.controller {
         crate::flows::artesanal::controller::generator::generate(&crate::cli::ControllerArgs {
-            name: format!("{}Controller", name),
-            resource: true,
-            model: Some(name),
+            name:         format!("{}Controller", name),
+            resource:     true,
+            model:        Some(name.clone()),
+            service:      args.service,
+            project_root: args.project_root.clone(),
+        })?;
+    } else if args.service {
+        // Sem controller: gera o service diretamente.
+        crate::flows::artesanal::service::generator::generate(&crate::cli::ServiceArgs {
+            name:         name.clone(),
+            model:        name.clone(),
             project_root: args.project_root.clone(),
         })?;
     }

@@ -5,7 +5,7 @@ use std::fs;
 use std::path::PathBuf;
 
 pub fn generate(args: &MigrationArgs) -> Result<()> {
-    let timestamp = chrono_like_timestamp();
+    let timestamp = laravel_timestamp();
     let filename = format!("{}_{}", timestamp, args.name);
     let table = args
         .table
@@ -23,15 +23,32 @@ pub fn generate(args: &MigrationArgs) -> Result<()> {
     Ok(())
 }
 
-fn chrono_like_timestamp() -> String {
-    // Simple timestamp using std — replace with chrono if needed
+fn laravel_timestamp() -> String {
     use std::time::{SystemTime, UNIX_EPOCH};
-    let secs = SystemTime::now()
+    let total = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
-        .as_secs();
-    // Format: YYYY_MM_DD_HHmmss (approximate, not calendar-accurate)
-    format!("{}", secs)
+        .as_secs() as i64;
+
+    let days     = total / 86400;
+    let rem      = total % 86400;
+    let hh       = rem / 3600;
+    let mm       = (rem % 3600) / 60;
+    let ss       = rem % 60;
+
+    // Euclidean affine algorithm — Howard Hinnant
+    let z   = days + 719_468;
+    let era = if z >= 0 { z / 146_097 } else { (z - 146_096) / 146_097 };
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
+    let year_base = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp  = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let mon = if mp < 10 { mp + 3 } else { mp - 9 };
+    let yr  = if mon <= 2 { year_base + 1 } else { year_base };
+
+    format!("{:04}_{:02}_{:02}_{:02}{:02}{:02}", yr, mon, day, hh, mm, ss)
 }
 
 fn extract_table_from_name(name: &str) -> String {

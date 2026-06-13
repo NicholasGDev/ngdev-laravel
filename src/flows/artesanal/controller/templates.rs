@@ -1,5 +1,57 @@
 use anyhow::Result;
 
+/// Controller com injeção de Service (padrão MVCS).
+pub fn render_resource_with_service(controller_name: &str, base_name: &str) -> String {
+    format!(
+        r#"<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Services\{base_name}Service;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class {controller_name} extends Controller
+{{
+    public function __construct(
+        protected {base_name}Service $service,
+    ) {{}}
+
+    public function index(): JsonResponse
+    {{
+        return response()->json($this->service->index());
+    }}
+
+    public function store(Request $request): JsonResponse
+    {{
+        $item = $this->service->store($request->validated());
+        return response()->json($item, 201);
+    }}
+
+    public function show(int $id): JsonResponse
+    {{
+        return response()->json($this->service->show($id));
+    }}
+
+    public function update(Request $request, int $id): JsonResponse
+    {{
+        return response()->json($this->service->update($id, $request->validated()));
+    }}
+
+    public function destroy(int $id): JsonResponse
+    {{
+        $this->service->destroy($id);
+        return response()->json(null, 204);
+    }}
+}}
+"#,
+        controller_name = controller_name,
+        base_name = base_name,
+    )
+}
+
 pub fn render_resource(name: &str, model: Option<&str>) -> Result<String> {
     let use_model = model
         .map(|m| format!("use App\\Models\\{};\n", m))

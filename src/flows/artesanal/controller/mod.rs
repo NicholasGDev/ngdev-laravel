@@ -9,12 +9,16 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!("{}", style("  [ Criar Controller ]").yellow().bold());
     println!();
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
+        .interact_text()?;
+
     let nome: String = Input::with_theme(theme)
         .with_prompt("  Nome do Controller (ex: UserController)")
         .interact_text()?;
 
-    let resource = Confirm::with_theme(theme)
-        .with_prompt("  Gerar controller de resource?")
+    let com_service = Confirm::with_theme(theme)
+        .with_prompt("  Gerar Service junto (MVCS)?")
         .default(true)
         .interact()?;
 
@@ -23,14 +27,11 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .allow_empty(true)
         .interact_text()?;
 
-    let project_root: String = Input::with_theme(theme)
-        .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
-        .interact_text()?;
-
     generator::generate(&crate::cli::ControllerArgs {
         name: nome,
-        resource,
+        resource: true,
         model: if model_nome.trim().is_empty() { None } else { Some(model_nome) },
+        service: com_service,
         project_root,
     })?;
 
