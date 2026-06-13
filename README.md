@@ -78,15 +78,15 @@ O `ngdev` gera scaffolding completo para projetos Laravel com DDD e Clean Archit
 
 | # | Gerador | O que entrega |
 |---|---|---|
-| 1 | Context DDD | Bounded context completo (Application + Domain + Infra) |
-| 2 | Logística Reversa | 7 Contexts + 10 Migrations + 10 Models + Manager JSON |
-| 3 | ERP Estoque | 6 Contexts + Kardex + UseCases + Manager JSON |
+| 1 | Context DDD | Bounded context completo (Application + Domain + Infra) + **Docker auto-scaffold** |
+| 2 | Logística Reversa | 7 Contexts + 10 Migrations + 10 Models + Manager JSON + **Docker auto-scaffold** |
+| 3 | ERP Estoque | 6 Contexts + Kardex + UseCases + Manager JSON + **Docker auto-scaffold** |
 | 4 | Infra Docker | Dockerfile dev/prod + compose + Nginx + Makefile |
 | 5 | Landing Page | HTML + Tailwind + DaisyUI (generic) ou Contabilizei-style (SaaS) |
 | 6 | Model | Eloquent + Migration + Controller opcionais |
 | 7 | Controller | Plain ou Resource com Model |
 | 8 | Migration | Schema::create com strict_types |
-| 9 | PDV | Scaffold completo Ponto de Venda |
+| 9 | PDV | Scaffold completo Ponto de Venda + **Docker auto-scaffold** |
 
 ---
 
@@ -164,7 +164,15 @@ flowchart TD
     W6 --> W7[MultiSelect: operações\nconsultar · detalhar · criar · alterar · deletar]
     W7 --> W8[Caminho absoluto do projeto Laravel\nex: /home/user/meu-projeto]
 
-    W8 --> APP & DOM & INF
+    W8 --> DEPS
+
+    subgraph DEPS [🔍 Verificação de Dependências — deps::verify_all]
+        D1[PHP 8.3 LTS\n+ todas as extensões Laravel\nauto-instala se ausente]
+        D2[Composer\nauto-instala se ausente]
+        D3[PostgreSQL 16\nauto-instala se ausente]
+    end
+
+    DEPS --> APP & DOM & INF
 
     subgraph APP [Application Layer]
         A1[DTOs Input — readonly class]
@@ -175,9 +183,9 @@ flowchart TD
     end
 
     subgraph DOM [Domain Layer]
-        D1[Entity — ::create e ::update]
-        D2[Enums de status]
-        D3[Autorizações — se selecionado]
+        D4[Entity — ::create e ::update]
+        D5[Enums de status]
+        D6[Autorizações — se selecionado]
     end
 
     subgraph INF [Infra Layer]
@@ -187,7 +195,15 @@ flowchart TD
         I4[Routes · ServiceProvider]
     end
 
-    APP & DOM & INF --> OK([✅ Context gerado\nem /projeto/base_path/NomeContext/])
+    subgraph DOCKER [🐳 Docker auto-scaffold]
+        DK1[Dockerfile.dev + Dockerfile.prod]
+        DK2[docker-compose.dev.yml + docker-compose.prod.yml]
+        DK3[nginx · php-fpm · xdebug · supervisor]
+        DK4[.dockerignore · .env.docker · Makefile]
+    end
+
+    APP & DOM & INF --> DOCKER
+    DOCKER --> OK([✅ Context + Docker gerados\nem /projeto/base_path/NomeContext/])
 ```
 
 ---
@@ -198,28 +214,34 @@ flowchart TD
 flowchart TD
     subgraph LOG [🚚 Logística Reversa de Sinistros]
         L1[paths · namespace · ERP ID\ncompany · warehouse] --> L2[Caminho absoluto do projeto]
-        L2 --> LA[7 Contexts DDD\nSeguradora · Transportadora · Segurado\nApólice · Sinistro · OrdemColeta · LaudoTriagem]
-        L2 --> LB[10 Migrations ordenadas por FK\ndeclare strict + índices + comentários]
-        L2 --> LC[10 Eloquent Models\n+ ItemSinistrado · MovimentacaoLogistica · RecebimentoCd]
-        L2 --> LD[Manager JSON\nSLA · Webhooks exponential_backoff · Intelipost Reverse]
-        LA & LB & LC & LD --> LOK([✅ Logística gerada])
+        L2 --> LDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
+        LDEPS --> LA[7 Contexts DDD\nSeguradora · Transportadora · Segurado\nApólice · Sinistro · OrdemColeta · LaudoTriagem]
+        LDEPS --> LB[10 Migrations ordenadas por FK\ndeclare strict + índices + comentários]
+        LDEPS --> LC[10 Eloquent Models\n+ ItemSinistrado · MovimentacaoLogistica · RecebimentoCd]
+        LDEPS --> LD[Manager JSON\nSLA · Webhooks exponential_backoff · Intelipost Reverse]
+        LA & LB & LC & LD --> LDK[🐳 Docker auto-scaffold\nDockerfile.dev/prod · docker-compose · Nginx · Makefile]
+        LDK --> LOK([✅ Logística + Docker gerados])
     end
 
     subgraph EST [📦 ERP Estoque]
         E1[paths · namespace\nmétodo custeio PEPS / Custo Médio] --> E2[Caminho absoluto do projeto]
-        E2 --> EA[6 Contexts DDD\nArmazem · Fornecedor · Produto\nPedidoCompra · MovimentacaoEstoque · Inventario]
-        E2 --> EB[10 Migrations decimal 12-3\nmulti-armazém · lote · inventário]
-        E2 --> EC[10 Models + 4 sub-entidades\nPosicaoEstoque · Lote\nItemPedidoCompra · ContagemInventario]
-        E2 --> ED[UseCases com regra de negócio\nRegistrarMovimentacao — Kardex imutável\nFecharInventario — ajuste_ganho / ajuste_perda]
-        E2 --> EE[Manager JSON\nPEPS · Custo Médio · alerta vencimento · ressuprimento]
-        EA & EB & EC & ED & EE --> EOK([✅ ERP Estoque gerado])
+        E2 --> EDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
+        EDEPS --> EA[6 Contexts DDD\nArmazem · Fornecedor · Produto\nPedidoCompra · MovimentacaoEstoque · Inventario]
+        EDEPS --> EB[10 Migrations decimal 12-3\nmulti-armazém · lote · inventário]
+        EDEPS --> EC[10 Models + 4 sub-entidades\nPosicaoEstoque · Lote\nItemPedidoCompra · ContagemInventario]
+        EDEPS --> ED[UseCases com regra de negócio\nRegistrarMovimentacao — Kardex imutável\nFecharInventario — ajuste_ganho / ajuste_perda]
+        EDEPS --> EE[Manager JSON\nPEPS · Custo Médio · alerta vencimento · ressuprimento]
+        EA & EB & EC & ED & EE --> EDK[🐳 Docker auto-scaffold\nDockerfile.dev/prod · docker-compose · Nginx · Makefile]
+        EDK --> EOK([✅ ERP Estoque + Docker gerados])
     end
 
     subgraph PDV [🧾 Scaffold PDV]
         P1[Modo: Tudo / Só Migrations / Só Models] --> P2[Caminho absoluto do projeto]
-        P2 --> PA[Migrations Ponto de Venda]
-        P2 --> PB[Eloquent Models PDV]
-        PA & PB --> POK([✅ PDV gerado])
+        P2 --> PDEPS[deps::verify_all\nPHP 8.3 · Composer · PostgreSQL]
+        PDEPS --> PA[Migrations Ponto de Venda]
+        PDEPS --> PB[Eloquent Models PDV]
+        PA & PB --> PDK[🐳 Docker auto-scaffold]
+        PDK --> POK([✅ PDV + Docker gerados])
     end
 ```
 
@@ -446,6 +468,46 @@ rustup target add x86_64-unknown-linux-musl
 RUSTFLAGS="-C target-feature=+crt-static" \
   cargo build --release --target x86_64-unknown-linux-musl
 ```
+
+---
+
+## Novidades — v0.2.0
+
+### `flows/deps` — Verificação e auto-instalação de dependências
+
+Todos os flows DDD (Context, Estoque, Logística Reversa, PDV) agora executam `deps::verify_all()` antes de gerar qualquer arquivo.
+
+| Dependência | Comportamento |
+|---|---|
+| **PHP 8.3 LTS** | Verifica ≥ 8.2. Se ausente, instala com todas as extensões Laravel (mbstring, pgsql, redis, gd, intl, opcache…) |
+| **Composer** | Verifica no PATH. Se ausente, instala via `winget` (Windows) ou installer oficial (Linux/macOS) |
+| **PostgreSQL 16** | Verifica `psql`/`pg_isready`. Se ausente, instala via repositório PGDG / brew / winget |
+
+**Estratégia de instalação por OS:**
+
+| OS | PHP | Composer | PostgreSQL |
+|---|---|---|---|
+| Ubuntu/Debian | `apt` + repo `ondrej/php` | installer oficial | `apt` + repo PGDG |
+| Fedora/RHEL | `dnf` + repo `pgdg-redhat` | installer oficial | `dnf` + initdb |
+| macOS | `brew install php` + `pecl` | installer oficial | `brew install postgresql@16` |
+| Windows | `winget install PHP.PHP` | `winget install Composer.Composer` | `winget install PostgreSQL.PostgreSQL` |
+
+---
+
+### Docker auto-scaffold embutido nos flows DDD
+
+Quatro flows agora geram automaticamente a infra Docker completa **no project root** ao final da execução — sem perguntas adicionais, com defaults coerentes:
+
+| Flow | Docker gerado | app_name |
+|---|---|---|
+| Context DDD | ✔ | nome do context em lowercase |
+| ERP Estoque | ✔ `[6/6]` | `estoque` |
+| Logística Reversa | ✔ `[5/5]` | `logistica-reversa` |
+| PDV | ✔ | `pdv` |
+
+**Stack Docker padrão:** PHP 8.3 · PostgreSQL · Redis · Mailpit (dev) · Nginx · Supervisor
+
+Arquivos gerados: `Dockerfile.dev`, `Dockerfile.prod`, `docker-compose.dev.yml`, `docker-compose.prod.yml`, `docker/nginx/`, `docker/php/`, `docker/supervisor/`, `.dockerignore`, `.env.docker`, `Makefile`
 
 ---
 
