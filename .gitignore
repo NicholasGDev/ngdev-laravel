@@ -3,3 +3,7 @@
 
 # Instrucoes de arquitetura (uso interno)
 arquitetura-contexts.instructions.md
+
+# Laravel base template — vendor nunca é versionado
+/laravel-base/vendor/
+/laravel-base/.env

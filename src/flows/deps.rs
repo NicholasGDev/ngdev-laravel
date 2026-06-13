@@ -453,6 +453,101 @@ pub fn ensure_postgres() -> Result<()> {
 /// código DDD/Laravel: PHP 8.3 LTS, Composer e PostgreSQL.
 ///
 /// Retorna a versão do PHP encontrada/instalada.
+// ── Laravel Base copy ─────────────────────────────────────────────────────────
+
+/// Localiza o diretório `laravel-base` distribuído junto com o binário.
+///
+/// Busca em ordem:
+///  1. Mesmo diretório do executável em execução
+///  2. Diretório de trabalho atual
+fn find_laravel_base() -> Option<std::path::PathBuf> {
+    // 1. ao lado do binário
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            let candidate = dir.join("laravel-base");
+            if candidate.join("composer.json").exists() {
+                return Some(candidate);
+            }
+        }
+    }
+    // 2. CWD (útil durante desenvolvimento)
+    if let Ok(cwd) = std::env::current_dir() {
+        let candidate = cwd.join("laravel-base");
+        if candidate.join("composer.json").exists() {
+            return Some(candidate);
+        }
+    }
+    None
+}
+
+/// Copia recursivamente `src` para `dst`, ignorando `vendor/`, `.git/` e `.env`.
+fn copy_dir_recursive(src: &std::path::Path, dst: &std::path::Path) -> Result<()> {
+    fs::create_dir_all(dst)?;
+    for entry in fs::read_dir(src)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let name_str = name.to_string_lossy();
+
+        // Pula artefatos que não devem ser copiados para o projeto destino.
+        if matches!(name_str.as_ref(), "vendor" | ".git" | ".env") {
+            continue;
+        }
+
+        let src_path = entry.path();
+        let dst_path = dst.join(&name);
+
+        if src_path.is_dir() {
+            copy_dir_recursive(&src_path, &dst_path)?;
+        } else {
+            if let Some(parent) = dst_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::copy(&src_path, &dst_path)?;
+        }
+    }
+    Ok(())
+}
+
+/// Copia o template `laravel-base/` para `dest`, inicializando um novo projeto
+/// Laravel sem precisar do Composer. O usuário deve rodar `composer install`
+/// manualmente após a geração.
+pub fn copy_laravel_base(dest: &str) -> Result<()> {
+    let src = find_laravel_base().ok_or_else(|| anyhow::anyhow!(
+        "Diretório 'laravel-base' não encontrado.\n\
+         Certifique-se de que ele está no mesmo diretório do binário 'ngdev'."
+    ))?;
+
+    let dst = std::path::Path::new(dest);
+
+    if dst.join("composer.json").exists() {
+        println!(
+            "  {} Projeto Laravel já existe em '{}' — pulando cópia do template.",
+            style("ℹ").cyan(),
+            style(dest).dim()
+        );
+        return Ok(());
+    }
+
+    println!(
+        "  {} Copiando template Laravel para '{}'...",
+        style("→").cyan(),
+        style(dest).white().bold()
+    );
+
+    copy_dir_recursive(&src, dst)?;
+
+    println!("  {} Template Laravel copiado.", style("✔").green().bold());
+    println!();
+    println!("  {} Próximos passos após a geração:", style("LEMBRETE:").yellow().bold());
+    println!("    cd {}", dest);
+    println!("    composer install");
+    println!("    cp .env.example .env");
+    println!("    php artisan key:generate");
+    println!();
+
+    Ok(())
+}
+
 pub fn verify_all() -> Result<String> {
     println!();
     println!(

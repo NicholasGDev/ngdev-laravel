@@ -26,7 +26,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .with_prompt("  Caminho absoluto do projeto Laravel (ex: /home/user/meu-projeto)")
         .interact_text()?;
 
-    deps::verify_all()?;
+    deps::copy_laravel_base(&project_root)?;
 
     generator::generate(&crate::cli::PdvArgs {
         migrations_only: selecao == 1,

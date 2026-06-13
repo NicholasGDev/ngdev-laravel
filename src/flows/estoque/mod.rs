@@ -59,7 +59,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!("  {}", style("Gerando estrutura completa...").yellow().bold());
     println!();
 
-    deps::verify_all()?;
+    deps::copy_laravel_base(root)?;
 
     generator::generate(&generator::EstoqueOptions {
         project_root: root.to_string(),
