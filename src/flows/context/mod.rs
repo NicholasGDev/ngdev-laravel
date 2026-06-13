@@ -60,6 +60,14 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
 
     let operacoes: Vec<String> = selecionados.iter().map(|&i| ops_keys[i].to_string()).collect();
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio raiz do projeto Laravel (onde salvar)")
+        .default(".".to_string())
+        .interact_text()?;
+    let root = project_root.trim_end_matches('/');
+    let base_path = if base_path.starts_with('/') { base_path }
+                    else { format!("{}/{}", root, base_path) };
+
     println!();
     println!(
         "  {} '{}'...",

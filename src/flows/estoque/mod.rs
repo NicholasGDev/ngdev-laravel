@@ -45,6 +45,16 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
 
     let valuation_method = if method_idx == 0 { "CUSTO_MEDIO_PONDERADO" } else { "PEPS" };
 
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Diretorio raiz do projeto Laravel (onde salvar)")
+        .default(".".to_string())
+        .interact_text()?;
+    let root = project_root.trim_end_matches('/');
+    let base_path = if base_path.starts_with('/') { base_path }
+                    else { format!("{}/{}", root, base_path) };
+    let migration_path = if migration_path.starts_with('/') { migration_path }
+                         else { format!("{}/{}", root, migration_path) };
+
     println!();
     println!("  {}", style("Gerando estrutura completa...").yellow().bold());
     println!();
