@@ -1,7 +1,7 @@
 {
-  "productName": "ngdev Manager",
+  "productName": "caronte Manager",
   "version": "0.1.0",
-  "identifier": "com.ngdev.manager",
+  "identifier": "com.caronte.manager",
   "build": {
     "beforeDevCommand": "cd ../frontend-installer && npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "ngdev Manager",
+        "title": "caronte Manager",
         "width": 1280,
         "height": 800,
         "minWidth": 900,

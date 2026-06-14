@@ -1,7 +1,7 @@
-//! Pontes entre o frontend DaisyUI e as camadas de aplicação do ngdev-laravel.
+//! Pontes entre o frontend DaisyUI e as camadas de aplicação do caronte-laravel.
 //! Cada função `#[tauri::command]` mapeia diretamente a um caso de uso do core.
 
-use ngdev_laravel::{
+use caronte_laravel::{
     cli::{ControllerArgs, MigrationArgs, ModelArgs, PdvArgs},
     flows::{
         artesanal::{

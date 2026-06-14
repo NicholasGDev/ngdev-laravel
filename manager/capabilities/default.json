@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "Permissões padrão para o ngdev Manager",
+  "description": "Permissões padrão para o caronte Manager",
   "windows": ["main"],
   "permissions": [
     "core:default",

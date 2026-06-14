@@ -1,11 +1,11 @@
 [package]
-name    = "ngdev-manager"
+name    = "caronte-manager"
 version = "0.1.0"
 edition = "2021"
-description = "ngdev GUI installer and manager (Tauri)"
+description = "caronte GUI installer and manager (Tauri)"
 
 [lib]
-name       = "ngdev_manager_lib"
+name       = "caronte_manager_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
@@ -17,4 +17,4 @@ tauri-plugin-shell = "2"
 serde              = { version = "1", features = ["derive"] }
 serde_json         = "1"
 anyhow             = "1"
-ngdev-laravel      = { path = ".." }
+caronte-laravel      = { path = ".." }

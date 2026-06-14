@@ -1,4 +1,4 @@
-# install.ps1 — Instala o ngdev globalmente em %USERPROFILE%\.cargo\bin
+# install.ps1 — Instala o caronte globalmente em %USERPROFILE%\.cargo\bin
 # Uso:
 #   .\install.ps1              (usa binário pré-compilado se existir)
 #   .\install.ps1 --build      (compila do zero com cargo)
@@ -6,13 +6,13 @@
 
 $ErrorActionPreference = "Stop"
 
-$BinaryName  = "ngdev.exe"
+$BinaryName  = "caronte.exe"
 $InstallDir  = "$env:USERPROFILE\.cargo\bin"
 $ReleaseBin  = ".\target\release\$BinaryName"
 
-function Write-Info  { param($msg) Write-Host "[ngdev] $msg" -ForegroundColor Green  }
-function Write-Warn  { param($msg) Write-Host "[ngdev] $msg" -ForegroundColor Yellow }
-function Write-Err   { param($msg) Write-Host "[ngdev] $msg" -ForegroundColor Red; exit 1 }
+function Write-Info  { param($msg) Write-Host "[caronte] $msg" -ForegroundColor Green  }
+function Write-Warn  { param($msg) Write-Host "[caronte] $msg" -ForegroundColor Yellow }
+function Write-Err   { param($msg) Write-Host "[caronte] $msg" -ForegroundColor Red; exit 1 }
 
 # ── Desinstalar ───────────────────────────────────────────────────────────────
 if ($args[0] -eq "--uninstall") {
@@ -85,7 +85,7 @@ if (-not (Test-Path $InstallDir)) {
 Copy-Item -Path $Bin -Destination (Join-Path $InstallDir $BinaryName) -Force
 
 Write-Info "Instalado: $InstallDir\$BinaryName"
-Write-Info "Execute:   ngdev"
+Write-Info "Execute:   caronte"
 
 # Avisa se o diretório não estiver no PATH da sessão atual
 if ($env:PATH -notlike "*$InstallDir*") {

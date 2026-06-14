@@ -18,5 +18,5 @@ pub fn run() {
             commands::generate_migration,
         ])
         .run(tauri::generate_context!())
-        .expect("Erro ao inicializar o ngdev Manager");
+        .expect("Erro ao inicializar o caronte Manager");
 }

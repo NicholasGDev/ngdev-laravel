@@ -1,4 +1,4 @@
-# ngdev-laravel
+# caronte-laravel
 
 > **Gerador interativo de código Laravel com suporte a DDD, Clean Architecture e infraestrutura Docker.**  
 > Escrito em Rust — roda via terminal e via painel gráfico (Tauri). Sem dependências externas.
@@ -60,7 +60,7 @@
 - [Fluxo — Landing Page](#fluxo--landing-page)
 - [Fluxo — Geradores Avulsos (MVCS)](#fluxo--geradores-avulsos-mvcs)
 - [Geradores em Detalhe](#geradores-em-detalhe)
-- [Painel Gráfico — ngdev Manager](#painel-gráfico--ngdev-manager-tauri)
+- [Painel Gráfico — caronte Manager](#painel-gráfico--caronte-manager-tauri)
 - [Instalação](#instalação-e-uso)
 - [Changelog](#changelog)
 - [Licença](#licença)
@@ -69,17 +69,17 @@
 
 ## Visão Geral
 
-O `ngdev` gera scaffolding completo para projetos Laravel. Suporta dois padrões arquiteturais:
+O `caronte` gera scaffolding completo para projetos Laravel. Suporta dois padrões arquiteturais:
 
 - **DDD + Clean Architecture** — Bounded Contexts com Application / Domain / Infra layers
 - **MVCS** — padrão nativo Laravel (`App\Models` · `App\Services` · `App\Http\Controllers`)
 
-Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto informado pelo usuário** — nunca dentro do próprio projeto `ngdev`.
+Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto informado pelo usuário** — nunca dentro do próprio projeto `caronte`.
 
 | Modo | Como rodar |
 |---|---|
-| **CLI interativo** | `ngdev` no terminal |
-| **Painel desktop** | `tauri dev` (dev) ou binário `ngdev-manager` (prod) |
+| **CLI interativo** | `caronte` no terminal |
+| **Painel desktop** | `tauri dev` (dev) ou binário `caronte-manager` (prod) |
 
 **13 geradores disponíveis:**
 
@@ -103,7 +103,7 @@ Cada gerador faz perguntas interativas e salva os arquivos no **caminho absoluto
 ## Estrutura do Projeto
 
 ```
-ngdev-laravel/
+caronte-laravel/
 ├── src/
 │   ├── main.rs                     ← CLI: menu interativo + ASCII logo
 │   ├── cli.rs                      ← Structs de args compartilhados
@@ -133,9 +133,9 @@ ngdev-laravel/
 ├── frontend-installer/             ← SPA Vite + TypeScript + Tailwind + DaisyUI
 │   ├── index.html                  ← Layout drawer (sidebar + main)
 │   └── src/main.ts                 ← Páginas e handlers dos geradores
-├── Cargo.toml                      ← Workspace (ngdev-laravel + manager)
-├── install.sh                      ← Instala ngdev em /usr/local/bin
-└── install.ps1                     ← Instala ngdev em %USERPROFILE%\.cargo\bin
+├── Cargo.toml                      ← Workspace (caronte-laravel + manager)
+├── install.sh                      ← Instala caronte em /usr/local/bin
+└── install.ps1                     ← Instala caronte em %USERPROFILE%\.cargo\bin
 ```
 
 ---
@@ -144,7 +144,7 @@ ngdev-laravel/
 
 ```mermaid
 flowchart TD
-    START([▶ ngdev]) --> LOGO[Exibe ASCII Logo\nNg Development · Laravel]
+    START([▶ caronte]) --> LOGO[Exibe ASCII Logo\nNg Development · Laravel]
     LOGO --> MENU{Selecione o gerador}
 
     MENU --> G1[Context DDD]
@@ -470,7 +470,7 @@ minha-landing/
 
 ---
 
-## Painel Gráfico — ngdev Manager (Tauri)
+## Painel Gráfico — caronte Manager (Tauri)
 
 Interface desktop construída com **Tauri v2 + Vite + TypeScript + Tailwind CSS + DaisyUI**.
 
@@ -505,7 +505,7 @@ tauri build
 ./install.sh --build
 
 # Executar
-ngdev
+caronte
 
 # Ou sem instalar
 cargo run

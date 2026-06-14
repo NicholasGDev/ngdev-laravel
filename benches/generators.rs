@@ -1,9 +1,9 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use ngdev_laravel::flows;
+use caronte_laravel::flows;
 use std::path::PathBuf;
 
 fn bench_landing_templates_only(c: &mut Criterion) {
-    use ngdev_laravel::flows::landing_page::templates;
+    use caronte_laravel::flows::landing_page::templates;
 
     let mut group = c.benchmark_group("landing_page_templates");
 
@@ -167,7 +167,7 @@ fn bench_landing_themes(c: &mut Criterion) {
 }
 
 fn bench_context_generator(c: &mut Criterion) {
-    use ngdev_laravel::flows::context::generator::{generate, ContextOptions};
+    use caronte_laravel::flows::context::generator::{generate, ContextOptions};
 
     let mut group = c.benchmark_group("context_ddd");
 
@@ -210,7 +210,7 @@ fn bench_context_generator(c: &mut Criterion) {
 }
 
 fn bench_docker_generator(c: &mut Criterion) {
-    use ngdev_laravel::flows::docker::generator::{generate, DockerOptions};
+    use caronte_laravel::flows::docker::generator::{generate, DockerOptions};
 
     let mut group = c.benchmark_group("docker_infra");
 
@@ -255,7 +255,7 @@ fn bench_docker_generator(c: &mut Criterion) {
 }
 
 fn tempfile_path(prefix: &str) -> PathBuf {
-    let dir = std::env::temp_dir().join("ngdev_bench");
+    let dir = std::env::temp_dir().join("caronte_bench");
     std::fs::create_dir_all(&dir).ok();
     dir.join(format!(
         "{prefix}_{}.html",
@@ -268,7 +268,7 @@ fn tempfile_path(prefix: &str) -> PathBuf {
 
 fn tempdir_path(prefix: &str) -> PathBuf {
     let dir = std::env::temp_dir()
-        .join("ngdev_bench")
+        .join("caronte_bench")
         .join(format!(
             "{}_{}",
             prefix,

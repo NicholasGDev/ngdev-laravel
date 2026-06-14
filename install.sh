@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — Instala o ngdev globalmente em /usr/local/bin
+# install.sh — Instala o caronte globalmente em /usr/local/bin
 # Uso:
 #   ./install.sh              (usa binário pré-compilado se existir)
 #   ./install.sh --build      (compila do zero com cargo)
@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-BINARY_NAME="ngdev"
+BINARY_NAME="caronte"
 INSTALL_DIR="/usr/local/bin"
 TARGET="x86_64-unknown-linux-musl"
 RELEASE_BIN="./target/${TARGET}/release/${BINARY_NAME}"
@@ -15,9 +15,9 @@ FALLBACK_BIN="./target/release/${BINARY_NAME}"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 
-info()    { echo -e "${GREEN}[ngdev]${NC} $*"; }
-warn()    { echo -e "${YELLOW}[ngdev]${NC} $*"; }
-err()     { echo -e "${RED}[ngdev]${NC} $*" >&2; exit 1; }
+info()    { echo -e "${GREEN}[caronte]${NC} $*"; }
+warn()    { echo -e "${YELLOW}[caronte]${NC} $*"; }
+err()     { echo -e "${RED}[caronte]${NC} $*" >&2; exit 1; }
 
 # ── Desinstalar ───────────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--uninstall" ]]; then

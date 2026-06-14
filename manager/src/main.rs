@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    ngdev_manager_lib::run()
+    caronte_manager_lib::run()
 }

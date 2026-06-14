@@ -3,7 +3,7 @@ members  = [".", "manager"]
 resolver = "2"
 
 [package]
-name = "ngdev-laravel"
+name = "caronte-laravel"
 version = "0.1.0"
 edition = "2021"
 description = "Ng Development - Laravel PHP code generator"
@@ -18,11 +18,11 @@ codegen-units = 1
 target = "x86_64-unknown-linux-musl"
 
 [[bin]]
-name = "ngdev"
+name = "caronte"
 path = "src/main.rs"
 
 [lib]
-name = "ngdev_laravel"
+name = "caronte_laravel"
 path = "src/lib.rs"
 
 [dependencies]

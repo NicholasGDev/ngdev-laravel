@@ -516,7 +516,7 @@ fn copy_dir_recursive(src: &std::path::Path, dst: &std::path::Path) -> Result<()
 pub fn copy_laravel_base(dest: &str) -> Result<()> {
     let src = find_laravel_base().ok_or_else(|| anyhow::anyhow!(
         "Diretório 'laravel-base' não encontrado.\n\
-         Certifique-se de que ele está no mesmo diretório do binário 'ngdev'."
+         Certifique-se de que ele está no mesmo diretório do binário 'caronte'."
     ))?;
 
     let dst = std::path::Path::new(dest);

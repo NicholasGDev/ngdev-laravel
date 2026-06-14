@@ -2152,7 +2152,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
-name = "ngdev-laravel"
+name = "caronte-laravel"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -2166,11 +2166,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "ngdev-manager"
+name = "caronte-manager"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "ngdev-laravel",
+ "caronte-laravel",
  "serde",
  "serde_json",
  "tauri",

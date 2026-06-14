@@ -44,7 +44,7 @@ RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
 # =============================================================================
 FROM php:{php_version}-fpm-bookworm AS dev
 
-LABEL maintainer="Ng Development <ngdev@example.com>"
+LABEL maintainer="Ng Development <caronte@example.com>"
 LABEL description="Laravel DEV image - PHP {php_version} com todas as extensoes"
 
 # ── Argumentos de build ───────────────────────────────────────────────────────
@@ -259,7 +259,7 @@ RUN npm run build 2>/dev/null || echo "No build script defined, skipping."
 # ── Stage 3: Runtime PHP (imagem final) ───────────────────────────────────────
 FROM php:{php_version}-fpm-bookworm AS runtime
 
-LABEL maintainer="Ng Development <ngdev@example.com>"
+LABEL maintainer="Ng Development <caronte@example.com>"
 LABEL description="Laravel PROD image - PHP {php_version} optimized"
 
 # ── Dependencias de sistema (apenas producao) ────────────────────────────────
