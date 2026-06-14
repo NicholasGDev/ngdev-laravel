@@ -68,6 +68,11 @@ else
     err "Binario nao encontrado. Execute: ./install.sh --build"
 fi
 
+# ── Cria diretório de destino se não existir ─────────────────────────────────
+if [[ ! -d "${INSTALL_DIR}" ]]; then
+    sudo mkdir -p "${INSTALL_DIR}"
+fi
+
 # ── Instala ───────────────────────────────────────────────────────────────────
 if [[ ! -w "${INSTALL_DIR}" ]]; then
     info "Requer sudo para instalar em ${INSTALL_DIR}..."
@@ -78,3 +83,9 @@ fi
 
 info "Instalado: ${INSTALL_DIR}/${BINARY_NAME}"
 info "Execute:   ${BINARY_NAME}"
+
+# Avisa se o diretório não estiver no PATH da sessão atual
+if [[ ":${PATH}:" != *":${INSTALL_DIR}:"* ]]; then
+    warn "${INSTALL_DIR} nao esta no PATH desta sessao."
+    warn "Adicione ao seu perfil ou execute: export PATH=\"${INSTALL_DIR}:\$PATH\""
+fi
