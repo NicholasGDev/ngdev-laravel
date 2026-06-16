@@ -33,6 +33,7 @@ fi
 # ── Build ─────────────────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--build" ]]; then
     info "Compilando (release estatico)..."
+    warn "Primeira compilacao pode levar 2-5 minutos. Aguarde..."
 
     if ! command -v cargo &>/dev/null; then
         # Tenta carregar rustup da sessao atual
@@ -52,9 +53,18 @@ if [[ "${1:-}" == "--build" ]]; then
         info "Rust instalado com sucesso."
     fi
 
+    # Instala musl-tools se necessario (Ubuntu/Debian)
+    if ! rustup target list --installed 2>/dev/null | grep -q "${TARGET}"; then
+        if command -v apt-get &>/dev/null && ! command -v musl-gcc &>/dev/null; then
+            info "Instalando musl-tools (necessario para build estatico)..."
+            sudo apt-get install -y musl-tools 2>/dev/null || true
+        fi
+    fi
+
     rustup target add "${TARGET}" 2>/dev/null || true
     RUSTFLAGS="-C target-feature=+crt-static" \
-        cargo build --release --target "${TARGET}"
+        cargo build --release --target "${TARGET}" 2>&1 | grep -v '^warning:'
+    info "Compilacao concluida."
 fi
 
 # ── Seleciona binário ─────────────────────────────────────────────────────────
@@ -82,6 +92,15 @@ else
 fi
 
 info "Instalado: ${INSTALL_DIR}/${BINARY_NAME}"
+
+# ── Instala assets (imagens de marca + .desktop no Linux) ─────────────────────
+ASSETS_DIR="/usr/local/share"
+if "${INSTALL_DIR}/${BINARY_NAME}" --install-assets --assets-dir "${ASSETS_DIR}" 2>/dev/null; then
+    info "Assets instalados em: ${ASSETS_DIR}/caronte/"
+else
+    warn "Nao foi possivel instalar assets (ignorado)."
+fi
+
 info "Execute:   ${BINARY_NAME}"
 
 # Avisa se o diretório não estiver no PATH da sessão atual

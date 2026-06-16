@@ -13,7 +13,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!();
     println!(
         "  {}",
-        style("Gera a landing page com formulário de contato já conectado ao backend CI4.").dim()
+        style("Landing page gerada em public/ do CI4 — uma pasta, um deploy.").dim()
     );
     println!();
 
@@ -97,22 +97,31 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         (secs, theme_keys[theme_idx].to_string())
     };
 
-    let lp_output: String = Input::with_theme(theme)
-        .with_prompt("  Caminho de saída da Landing Page (absoluto)")
-        .interact_text()?;
+    // slug do produto: "Meu Produto" → "meu-produto"
+    let slug = product_name
+        .to_lowercase()
+        .replace(' ', "-")
+        .replace('_', "-");
 
     println!();
-    println!("  {}", style("── Backend CI4 ──────────────────────────────────────────────────").dim());
+    println!(
+        "  {}",
+        style("Exemplo de caminho de saída:").dim()
+    );
+    println!(
+        "  {}  {}",
+        style("Linux  →").cyan(),
+        style(format!("/home/usuario/projetos/{slug}")).white()
+    );
+    println!(
+        "  {}  {}",
+        style("Windows→").cyan(),
+        style(format!("C:\\projetos\\{slug}")).white()
+    );
     println!();
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BACKEND CI4 — perguntas
-    // ─────────────────────────────────────────────────────────────────────────
-    let app_name: String = Input::with_theme(theme)
-        .with_prompt("  Slug do projeto backend (ex: meu-backend)")
-        .default(
-            product_name.to_lowercase().replace(' ', "-").replace('_', "-")
-        )
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Caminho da pasta do projeto (absoluto)")
         .interact_text()?;
 
     let base_url: String = Input::with_theme(theme)
@@ -120,19 +129,28 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .default("http://localhost:8080/".to_string())
         .interact_text()?;
 
-    // CORS = a URL da landing page (usada no backend)
+    // CORS: mesma origem ou subdomínio diferente. Se tudo estiver no mesmo
+    // domínio (landing page em public/ + API no mesmo host) usar "*" está OK.
     let lp_url: String = Input::with_theme(theme)
-        .with_prompt("  URL da Landing Page (para CORS, ex: https://meusite.com.br)")
+        .with_prompt("  Origem permitida no CORS  (mesmo domínio = *  |  outro = https://meusite.com.br)")
         .default("*".to_string())
         .interact_text()?;
 
-    let ci4_output: String = Input::with_theme(theme)
-        .with_prompt("  Caminho de saída do Backend CI4 (absoluto)")
-        .interact_text()?;
+    // CI4 = raiz do projeto; Landing Page vai em <raiz>/public/ (web root do CI4)
+    let ci4_output = project_root.clone();
+    let lp_output  = format!("{}/public", project_root.trim_end_matches('/'));
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Gerar ambos
+    // Gerar: primeiro CI4 (cria a estrutura), depois a landing em public/
     // ─────────────────────────────────────────────────────────────────────────
+    let ci4_opts = Ci4Options {
+        app_name:     slug.clone(),
+        company_name: company_name.clone(),
+        base_url:     base_url.clone(),
+        cors_origin:  lp_url,
+        output_dir:   ci4_output.clone(),
+    };
+
     let lp_opts = LandingPageOptions {
         product_name:  product_name.clone(),
         tagline:       tagline.clone(),
@@ -144,31 +162,30 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         api_url:       base_url.trim_end_matches('/').to_string(),
     };
 
-    let ci4_opts = Ci4Options {
-        app_name,
-        company_name,
-        base_url:     base_url.clone(),
-        cors_origin:  lp_url,
-        output_dir:   ci4_output.clone(),
-    };
-
-    generate_combined(&lp_opts, &ci4_opts)?;
+    // 1) extrai CI4 e escreve configs customizadas
     generate_ci4(&ci4_opts)?;
+    // 2) gera landing page dentro de public/ (index.html + sections/)
+    generate_combined(&lp_opts, &ci4_opts)?;
 
     println!();
     println!("  {} Gerado com sucesso!", style("✔").green().bold());
     println!();
-    println!("  {} Landing Page : {}", style("→").cyan(), style(&lp_output).white().bold());
-    println!("  {} Backend CI4  : {}", style("→").cyan(), style(&ci4_output).white().bold());
+    println!("  {} Estrutura criada:", style("→").cyan());
+    println!("    {}/", style(&project_root).white().bold());
+    println!("    ├── app/                ← CI4: controllers, models, migrations...");
+    println!("    ├── public/             ← web root (Apache/Nginx aponta aqui)");
+    println!("    │   ├── index.html      ← landing page (servida diretamente)");
+    println!("    │   ├── index.php       ← CI4 front controller (rotas da API)");
+    println!("    │   └── sections/       ← fragmentos HTML da landing");
+    println!("    ├── writable/           ← banco SQLite + logs");
+    println!("    └── env                 ← copie para .env e configure");
     println!();
     println!("  {} Próximos passos:", style("LEMBRETE:").yellow().bold());
-    println!("    # Backend:");
-    println!("    cd {}", ci4_output);
-    println!("    composer install");
-    println!("    cp env .env   # ajuste JWT_SECRET, SETUP_TOKEN, app.baseURL");
+    println!("    cd {}", project_root);
+    println!("    cp env .env   # edite JWT_SECRET, SETUP_TOKEN, app.baseURL");
+    println!("    # Aponte o VirtualHost para:  {}/public", project_root);
+    println!("    # Acesse no browser para criar as tabelas:");
     println!("    GET {base_url}setup/migrate?token=SEU_SETUP_TOKEN");
-    println!();
-    println!("    # Upload ambas as pastas via FTP");
     println!();
 
     Ok(())

@@ -1,12 +1,12 @@
 pub mod deps;
-pub mod context;
-pub mod estoque;
+#[allow(dead_code)] pub mod context;
+#[allow(dead_code)] pub mod estoque;
 pub mod erp_estoque;
 pub mod erp_logistica;
 pub mod landing_page;
 pub mod ci4_backend;
 pub mod landing_ci4;
-pub mod logistica_reversa;
+#[allow(dead_code)] pub mod logistica_reversa;
 pub mod pdv;
 pub mod artesanal;
 pub mod docker;

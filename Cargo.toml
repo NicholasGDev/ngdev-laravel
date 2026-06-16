@@ -6,16 +6,15 @@ resolver = "2"
 name = "caronte-laravel"
 version = "0.1.0"
 edition = "2021"
-description = "Ng Development - Laravel PHP code generator"
+description = "Caronte — Laravel PHP code generator"
+
+[profile.release]
+strip = true
+lto   = true
+codegen-units = 1
 
 [profile.dist]
 inherits = "release"
-strip = true
-lto = true
-codegen-units = 1
-
-[build]
-target = "x86_64-unknown-linux-musl"
 
 [[bin]]
 name = "caronte"

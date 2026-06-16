@@ -1,3 +1,4 @@
+mod assets;
 mod cli;
 mod flows;
 
@@ -54,6 +55,19 @@ const LOGO: &str = r#"
 "#;
 
 fn main() -> Result<()> {
+    // ── Subcomandos CLI sem menu interativo ──────────────────────────────────
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|a| a == "--install-assets") {
+        let dest = args
+            .iter()
+            .position(|a| a == "--assets-dir")
+            .and_then(|i| args.get(i + 1))
+            .map(|s| s.as_str())
+            .unwrap_or("/usr/local/share");
+        assets::install_assets(dest)?;
+        return Ok(());
+    }
+
     let term = Term::stdout();
     term.clear_screen()?;
 
