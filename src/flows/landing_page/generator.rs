@@ -1,5 +1,6 @@
 use super::templates;
 use super::templates_saas;
+use crate::flows::landing_ci4::generator::section_contact;
 use anyhow::Result;
 use console::style;
 use std::fs;
@@ -17,6 +18,9 @@ pub struct LandingPageOptions {
     ///   <output_dir>/index.html
     ///   <output_dir>/sections/navbar.html  hero.html  footer.html  <secao>.html
     pub output_dir: String,
+    /// URL base do backend CI4 para o formulário de contato.
+    /// Vazio = sem formulário de contato conectado.
+    pub api_url: String,
 }
 
 fn write_file(path: &PathBuf, content: &str) -> Result<()> {
@@ -81,6 +85,16 @@ fn generate_generic(opts: &LandingPageOptions) -> Result<()> {
     }
 
     body_parts.push(footer_html);
+
+    // ── Formulário de contato conectado ao CI4 (quando api_url definido) ────
+    if !opts.api_url.is_empty() {
+        let contact_html = section_contact(&opts.product_name, &opts.api_url);
+        write_file(&sections_dir.join("contact").join("index.html"), &contact_html)?;
+        // Insere antes do footer
+        let pos = body_parts.len() - 1;
+        body_parts.insert(pos, contact_html);
+    }
+
     let body = body_parts.join("\n");
     let index_html = templates::html_shell(&opts.product_name, &opts.theme, &body);
     let index_path = base.join("index.html");
@@ -89,7 +103,7 @@ fn generate_generic(opts: &LandingPageOptions) -> Result<()> {
     print_report(opts, order, &index_path)
 }
 
-// ── Layout SaaS / Serviço (Contabilizei-style) ───────────────────────────────
+// ── Layout SaaS / Serviço (Contabilizei-style) ────────────────────────────────────
 fn generate_saas(opts: &LandingPageOptions) -> Result<()> {
     let base = PathBuf::from(&opts.output_dir);
     let sections_dir = base.join("sections");
@@ -133,6 +147,15 @@ fn generate_saas(opts: &LandingPageOptions) -> Result<()> {
     }
 
     body_parts.push(footer_html);
+
+    // ── Formulário de contato conectado ao CI4 (quando api_url definido) ────
+    if !opts.api_url.is_empty() {
+        let contact_html = section_contact(&opts.product_name, &opts.api_url);
+        write_file(&sections_dir.join("contact").join("index.html"), &contact_html)?;
+        let pos = body_parts.len() - 1;
+        body_parts.insert(pos, contact_html);
+    }
+
     let body = body_parts.join("\n");
     let index_html = templates_saas::html_shell_saas(&opts.product_name, &body);
     let index_path = base.join("index.html");

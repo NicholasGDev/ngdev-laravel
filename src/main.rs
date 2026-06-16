@@ -66,13 +66,12 @@ fn main() -> Result<()> {
 
     loop {
         let opcoes = vec![
-            "Criar Context (DDD Completo)",
-            "Scaffold Logistica Reversa de Sinistros (DDD)",
-            "Scaffold ERP Estoque (DDD)",
             "Scaffold ERP Estoque (MVCS — padrao Laravel)",
             "Scaffold ERP Logistica Reversa (MVCS — padrao Laravel)",
             "Gerar Infra Docker (dev + prod, multi-DB)",
+            "Landing Page + Backend CI4 (formulario conectado)",
             "Gerar Landing Page (HTML + Tailwind + DaisyUI)",
+            "Gerar Backend CI4 (SQLite + JWT + Export JSON/CSV)",
             "Criar Model",
             "Criar Controller",
             "Criar Service",
@@ -90,19 +89,18 @@ fn main() -> Result<()> {
         println!();
 
         match selecao {
-            0 => flows::context::run(&theme)?,
-            1 => flows::logistica_reversa::run(&theme)?,
-            2 => flows::estoque::run(&theme)?,
-            3 => flows::erp_estoque::run(&theme)?,
-            4 => flows::erp_logistica::run(&theme)?,
-            5 => flows::docker::run(&theme)?,
-            6 => flows::landing_page::run(&theme)?,
-            7 => flows::artesanal::model::run(&theme)?,
-            8 => flows::artesanal::controller::run(&theme)?,
-            9 => flows::artesanal::service::run(&theme)?,
-            10 => flows::artesanal::migration::run(&theme)?,
-            11 => flows::pdv::run(&theme)?,
-            12 => {
+            0  => flows::erp_estoque::run(&theme)?,
+            1  => flows::erp_logistica::run(&theme)?,
+            2  => flows::docker::run(&theme)?,
+            3  => flows::landing_ci4::run(&theme)?,
+            4  => flows::landing_page::run(&theme)?,
+            5  => flows::ci4_backend::run(&theme)?,
+            6  => flows::artesanal::model::run(&theme)?,
+            7  => flows::artesanal::controller::run(&theme)?,
+            8  => flows::artesanal::service::run(&theme)?,
+            9  => flows::artesanal::migration::run(&theme)?,
+            10 => flows::pdv::run(&theme)?,
+            11 => {
                 println!("{}", style("  Ate logo!").cyan().bold());
                 break;
             }
