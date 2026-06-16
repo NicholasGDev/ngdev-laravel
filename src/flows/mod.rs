@@ -1,10 +1,12 @@
 pub mod deps;
-// pub mod context;
-// pub mod estoque;
+pub mod context;
+pub mod estoque;
 pub mod erp_estoque;
 pub mod erp_logistica;
 pub mod landing_page;
-// pub mod logistica_reversa;
+pub mod ci4_backend;
+pub mod landing_ci4;
+pub mod logistica_reversa;
 pub mod pdv;
 pub mod artesanal;
 pub mod docker;
