@@ -129,11 +129,6 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .default("http://localhost:8080/".to_string())
         .interact_text()?;
 
-    let lp_url: String = Input::with_theme(theme)
-        .with_prompt("  URL da Landing Page para CORS  (ex: https://meusite.com.br  ou  *)")
-        .default("*".to_string())
-        .interact_text()?;
-
     // CORS: mesma origem ou subdomínio diferente. Se tudo estiver no mesmo
     // domínio (landing page em public/ + API no mesmo host) usar "*" está OK.
     let lp_url: String = Input::with_theme(theme)
