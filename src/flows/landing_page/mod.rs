@@ -124,6 +124,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         layout: layout.to_string(),
         sections,
         output_dir,
+        api_url: String::new(), // sem backend conectado no fluxo standalone
     })?;
 
     Ok(())
