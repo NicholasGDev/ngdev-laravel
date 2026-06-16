@@ -13,7 +13,7 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!();
     println!(
         "  {}",
-        style("Gera a landing page com formulário de contato já conectado ao backend CI4.").dim()
+        style("Gera a landing page + backend CI4 numa única pasta. O CI4 fica em backend/.").dim()
     );
     println!();
 
@@ -97,22 +97,31 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         (secs, theme_keys[theme_idx].to_string())
     };
 
-    let lp_output: String = Input::with_theme(theme)
-        .with_prompt("  Caminho de saída da Landing Page (absoluto)")
-        .interact_text()?;
+    // slug do produto: "Meu Produto" → "meu-produto"
+    let slug = product_name
+        .to_lowercase()
+        .replace(' ', "-")
+        .replace('_', "-");
 
     println!();
-    println!("  {}", style("── Backend CI4 ──────────────────────────────────────────────────").dim());
+    println!(
+        "  {}",
+        style("Exemplo de caminho de saída:").dim()
+    );
+    println!(
+        "  {}  {}",
+        style("Linux  →").cyan(),
+        style(format!("/home/usuario/projetos/{slug}")).white()
+    );
+    println!(
+        "  {}  {}",
+        style("Windows→").cyan(),
+        style(format!("C:\\projetos\\{slug}")).white()
+    );
     println!();
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BACKEND CI4 — perguntas
-    // ─────────────────────────────────────────────────────────────────────────
-    let app_name: String = Input::with_theme(theme)
-        .with_prompt("  Slug do projeto backend (ex: meu-backend)")
-        .default(
-            product_name.to_lowercase().replace(' ', "-").replace('_', "-")
-        )
+    let project_root: String = Input::with_theme(theme)
+        .with_prompt("  Caminho da pasta do projeto (absoluto)")
         .interact_text()?;
 
     let base_url: String = Input::with_theme(theme)
@@ -120,15 +129,14 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
         .default("http://localhost:8080/".to_string())
         .interact_text()?;
 
-    // CORS = a URL da landing page (usada no backend)
     let lp_url: String = Input::with_theme(theme)
-        .with_prompt("  URL da Landing Page (para CORS, ex: https://meusite.com.br)")
+        .with_prompt("  URL da Landing Page para CORS  (ex: https://meusite.com.br  ou  *)")
         .default("*".to_string())
         .interact_text()?;
 
-    let ci4_output: String = Input::with_theme(theme)
-        .with_prompt("  Caminho de saída do Backend CI4 (absoluto)")
-        .interact_text()?;
+    // Landing page = raiz do projeto; CI4 = <raiz>/backend
+    let lp_output  = project_root.clone();
+    let ci4_output = format!("{}/backend", project_root.trim_end_matches('/'));
 
     // ─────────────────────────────────────────────────────────────────────────
     // Gerar ambos
@@ -145,8 +153,8 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     };
 
     let ci4_opts = Ci4Options {
-        app_name,
-        company_name,
+        app_name:     slug.clone(),
+        company_name: company_name.clone(),
         base_url:     base_url.clone(),
         cors_origin:  lp_url,
         output_dir:   ci4_output.clone(),
@@ -158,17 +166,18 @@ pub fn run(theme: &ColorfulTheme) -> Result<()> {
     println!();
     println!("  {} Gerado com sucesso!", style("✔").green().bold());
     println!();
-    println!("  {} Landing Page : {}", style("→").cyan(), style(&lp_output).white().bold());
-    println!("  {} Backend CI4  : {}", style("→").cyan(), style(&ci4_output).white().bold());
+    println!("  {} Estrutura criada:", style("→").cyan());
+    println!("    {}/", style(&project_root).white().bold());
+    println!("    ├── index.html          ← landing page");
+    println!("    ├── sections/           ← seções HTML");
+    println!("    └── backend/            ← API CI4 (SQLite + JWT)");
     println!();
     println!("  {} Próximos passos:", style("LEMBRETE:").yellow().bold());
-    println!("    # Backend:");
-    println!("    cd {}", ci4_output);
-    println!("    composer install");
-    println!("    cp env .env   # ajuste JWT_SECRET, SETUP_TOKEN, app.baseURL");
+    println!("    cd {}/backend", project_root);
+    println!("    cp env .env   # edite JWT_SECRET, SETUP_TOKEN, app.baseURL");
+    println!("    # Upload de TUDO via FTP (landing page + backend/)");
+    println!("    # Acesse no browser para criar as tabelas:");
     println!("    GET {base_url}setup/migrate?token=SEU_SETUP_TOKEN");
-    println!();
-    println!("    # Upload ambas as pastas via FTP");
     println!();
 
     Ok(())
